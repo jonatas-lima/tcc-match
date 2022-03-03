@@ -2,9 +2,7 @@ package com.psoft.match.tcc.model.user;
 
 import com.psoft.match.tcc.model.StudyArea;
 
-import javax.persistence.Entity;
-import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import java.util.Collection;
 import java.util.HashSet;
 
@@ -18,6 +16,7 @@ public class Professor extends User {
     //private Collection<Lab> labs;
 
     @ManyToMany
+    @JoinTable(joinColumns = @JoinColumn(name = "professor_id"), inverseJoinColumns = @JoinColumn(name = "study_area_id"))
     private Collection<StudyArea> interestedStudyAreas;
 
     public Professor() {}

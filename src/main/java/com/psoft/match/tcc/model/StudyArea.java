@@ -1,9 +1,11 @@
 package com.psoft.match.tcc.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import com.psoft.match.tcc.model.user.Professor;
+import com.psoft.match.tcc.model.user.Student;
+
+import javax.persistence.*;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Objects;
 
 @Entity
@@ -15,10 +17,18 @@ public class StudyArea {
 
     private String description;
 
+    @ManyToMany(mappedBy = "interestedAreas")
+    private Collection<Student> interestedStudents;
+
+    @ManyToMany(mappedBy = "interestedStudyAreas")
+    private Collection<Professor> interestedProfessors;
+
     public StudyArea() {}
 
     public StudyArea(String description) {
         this.description = description;
+        this.interestedStudents = new HashSet<>();
+        this.interestedProfessors = new HashSet<>();
     }
 
     public Long getId() {
@@ -27,6 +37,22 @@ public class StudyArea {
 
     public String getDescription() {
         return description;
+    }
+
+    public boolean addInterestedStudent(Student student) {
+        return this.interestedStudents.add(student);
+    }
+
+    public boolean removeInterestedStudent(Student student) {
+        return this.interestedStudents.remove(student);
+    }
+
+    public boolean addInterestedProfessor(Professor professor) {
+        return this.interestedProfessors.add(professor);
+    }
+
+    public boolean removeInterestedProfessor(Professor professor) {
+        return this.interestedProfessors.remove(professor);
     }
 
     @Override

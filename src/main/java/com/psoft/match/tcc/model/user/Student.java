@@ -3,6 +3,8 @@ package com.psoft.match.tcc.model.user;
 import com.psoft.match.tcc.model.StudyArea;
 
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import java.util.Collection;
 import java.util.HashSet;
@@ -19,6 +21,7 @@ public class Student extends User {
     private String expectedConclusionTerm;
 
     @ManyToMany
+    @JoinTable(joinColumns = @JoinColumn(name = "student_id"), inverseJoinColumns = @JoinColumn(name = "study_area_id"))
     private Collection<StudyArea> interestedAreas;
 
     public Student() {}

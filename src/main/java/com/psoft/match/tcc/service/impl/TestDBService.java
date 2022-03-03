@@ -3,7 +3,6 @@ package com.psoft.match.tcc.service.impl;
 import com.psoft.match.tcc.model.StudyArea;
 import com.psoft.match.tcc.model.tcc.TCC;
 import com.psoft.match.tcc.model.tcc.TCCProposal;
-import com.psoft.match.tcc.model.tcc.TCCStatus;
 import com.psoft.match.tcc.model.user.Professor;
 import com.psoft.match.tcc.model.user.Student;
 import com.psoft.match.tcc.model.user.User;
@@ -67,18 +66,31 @@ public class TestDBService implements DBService {
         List<StudyArea> studyAreas = Arrays.asList(studyArea1, studyArea2, studyArea3, studyArea4);
         studyAreaRepository.saveAll(studyAreas);
 
+        studyArea1.addInterestedProfessor(professor1);
+        studyArea2.addInterestedProfessor(professor1);
+        studyArea3.addInterestedProfessor(professor1);
         professor1.addInterestedStudyArea(studyArea1);
         professor1.addInterestedStudyArea(studyArea2);
         professor1.addInterestedStudyArea(studyArea3);
 
+        studyArea1.addInterestedProfessor(professor2);
+        studyArea4.addInterestedProfessor(professor2);
         professor2.addInterestedStudyArea(studyArea4);
         professor2.addInterestedStudyArea(studyArea1);
 
+        studyArea1.addInterestedStudent(student1);
+        studyArea2.addInterestedStudent(student1);
         student1.addInterestedArea(studyArea1);
         student1.addInterestedArea(studyArea2);
 
+        studyArea3.addInterestedStudent(student2);
+        studyArea4.addInterestedStudent(student2);
         student2.addInterestedArea(studyArea3);
         student2.addInterestedArea(studyArea4);
+
+        professorRepository.saveAll(professors);
+        studentRepository.saveAll(students);
+        studyAreaRepository.saveAll(studyAreas);
 
         TCCProposal tccProposal1 = new TCCProposal("Proposta 1", "descricao da proposta 1");
         TCCProposal tccProposal2 = new TCCProposal("Proposta 2", "descricao da proposta 2");
@@ -100,7 +112,5 @@ public class TestDBService implements DBService {
         List<TCC> tccs = Arrays.asList(tcc1, tcc2);
 
         tccRepository.saveAll(tccs);
-        professorRepository.saveAll(professors);
-        studentRepository.saveAll(students);
     }
 }
