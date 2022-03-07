@@ -3,6 +3,7 @@ package com.psoft.match.tcc.service.impl;
 import com.psoft.match.tcc.model.StudyArea;
 import com.psoft.match.tcc.model.tcc.TCC;
 import com.psoft.match.tcc.model.tcc.TCCProposal;
+import com.psoft.match.tcc.model.user.Admin;
 import com.psoft.match.tcc.model.user.Professor;
 import com.psoft.match.tcc.model.user.Student;
 import com.psoft.match.tcc.model.user.User;
@@ -42,6 +43,8 @@ public class TestDBService implements DBService {
 
     @Override
     public void seed() {
+        Admin admin = new Admin("admin", "admin@admim.com", "admin", "admin");
+
         Professor professor1 = new Professor("Elmar Melcher", "elmar@gmail.com", "elmar", "1234");
         Professor professor2 = new Professor("Francisco Vilar", "fubica@gmail.com", "fubica", "1234");
         Professor professor3 = new Professor("Joao Arthur", "joao.arthur@gmail.com", "joao_arthur", "1234");
@@ -49,7 +52,7 @@ public class TestDBService implements DBService {
         Student student1 = new Student("Jonatas Ferreira de Lima", "119210036", "ferreiradelimajonatas@gmail.com", "2024.2", "jonatas", "123");
         Student student2 = new Student("Bernard Dantas Odon", "123", "bernard.odon@ccc.ufcg.edu.br", "2024.2", "bodon", "123");
 
-        List<User> users = Arrays.asList(student1, student2, professor1);
+        List<User> users = Arrays.asList(admin, student1, student2, professor1);
 
         List<Student> students = Arrays.asList(student1, student2);
         List<Professor> professors = Arrays.asList(professor1, professor2, professor3);

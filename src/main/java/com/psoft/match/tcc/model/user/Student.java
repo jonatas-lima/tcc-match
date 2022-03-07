@@ -12,11 +12,7 @@ import java.util.HashSet;
 @Entity
 public class Student extends User {
 
-    private String fullName;
-
     private String registration;
-
-    private String email;
 
     private String expectedConclusionTerm;
 
@@ -27,22 +23,10 @@ public class Student extends User {
     public Student() {}
 
     public Student(String fullName, String registration, String email, String expectedConclusionTerm, String username, String password) {
-        this.fullName = fullName;
+        super(fullName, email, username, password, UserRole.COMMON_USER);
         this.registration = registration;
-        this.email = email;
         this.expectedConclusionTerm = expectedConclusionTerm;
         this.interestedAreas = new HashSet<>();
-        this.setUsername(username);
-        this.setPassword(password);
-        this.setRole(UserRole.COMMON_USER);
-    }
-
-    public String getFullName() {
-        return fullName;
-    }
-
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
     }
 
     public String getRegistration() {
@@ -51,14 +35,6 @@ public class Student extends User {
 
     public void setRegistration(String registration) {
         this.registration = registration;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     public String getExpectedConclusionTerm() {

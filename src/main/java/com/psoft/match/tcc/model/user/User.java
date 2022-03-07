@@ -1,6 +1,9 @@
 package com.psoft.match.tcc.model.user;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -10,6 +13,10 @@ public abstract class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String fullName;
+
+    private String email;
+
     private String username;
 
     private String password;
@@ -18,7 +25,9 @@ public abstract class User {
 
     public User() {}
 
-    public User(String username, String password, UserRole role) {
+    public User(String fullName, String email, String username, String password, UserRole role) {
+        this.fullName = fullName;
+        this.email = email;
         this.username = username;
         this.password = password;
         this.role = role;
@@ -28,8 +37,20 @@ public abstract class User {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
     }
 
     public String getUsername() {
@@ -40,6 +61,7 @@ public abstract class User {
         this.username = username;
     }
 
+    @JsonIgnore
     public String getPassword() {
         return password;
     }
@@ -54,5 +76,18 @@ public abstract class User {
 
     public void setRole(UserRole role) {
         this.role = role;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return email.equals(user.email);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(email);
     }
 }
