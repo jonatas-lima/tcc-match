@@ -9,6 +9,7 @@ import com.psoft.match.tcc.service.ProfessorService;
 import com.psoft.match.tcc.util.exception.user.UserAlreadyExistsException;
 import com.psoft.match.tcc.util.exception.professor.ProfessorNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -22,6 +23,9 @@ public class ProfessorServiceImpl implements ProfessorService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Override
     public List<Professor> getAllProfessors() {
@@ -63,7 +67,8 @@ public class ProfessorServiceImpl implements ProfessorService {
     }
 
     private Professor buildProfessor(ProfessorDTO professorDTO) {
-        return new Professor(professorDTO.getFullName(), professorDTO.getEmail(), professorDTO.getUsername(), professorDTO.getPassword());
+        String encryptedPassword = passwordEncoder.encode(professorDTO.getPassword());
+        return new Professor(professorDTO.getFullName(), professorDTO.getEmail(), professorDTO.getUsername(), encryptedPassword);
     }
 
     private void updateProfessor(Professor oldProfessor, ProfessorDTO newProfessor) {

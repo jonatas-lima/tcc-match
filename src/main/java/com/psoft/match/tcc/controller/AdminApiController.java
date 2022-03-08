@@ -4,12 +4,14 @@ import com.psoft.match.tcc.dto.ProfessorDTO;
 import com.psoft.match.tcc.model.user.Professor;
 import com.psoft.match.tcc.service.ProfessorService;
 import com.psoft.match.tcc.util.Constants;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@Api(tags = "Admin operations")
 @RestController
 @RequestMapping(Constants.BASE_API_ENDPOINT + "/admin")
 @CrossOrigin

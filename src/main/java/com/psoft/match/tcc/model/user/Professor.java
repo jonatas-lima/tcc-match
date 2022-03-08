@@ -21,7 +21,7 @@ public class Professor extends User {
     public Professor() {}
 
     public Professor(String fullName, String email, String username, String password) {
-        super(fullName, email, username, password, UserRole.COMMON_USER);
+        super(fullName, email, username, password, UserRole.PROFESSOR);
         this.interestedStudyAreas = new HashSet<>();
     }
 

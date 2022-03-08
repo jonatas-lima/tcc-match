@@ -23,7 +23,7 @@ public class Student extends User {
     public Student() {}
 
     public Student(String fullName, String registration, String email, String expectedConclusionTerm, String username, String password) {
-        super(fullName, email, username, password, UserRole.COMMON_USER);
+        super(fullName, email, username, password, UserRole.STUDENT);
         this.registration = registration;
         this.expectedConclusionTerm = expectedConclusionTerm;
         this.interestedAreas = new HashSet<>();
