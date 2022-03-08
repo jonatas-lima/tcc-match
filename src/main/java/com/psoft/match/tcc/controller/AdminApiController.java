@@ -34,12 +34,14 @@ public class AdminApiController {
     }
 
     @PutMapping(value = "/update/professor/{id}")
+    @ApiOperation(value = "Atualiza as informações de um professor")
     public ResponseEntity<Professor> updateProfessor(@PathVariable Long id, @RequestBody ProfessorDTO professorDTO) {
         Professor updatedProfessor = professorService.updateProfessor(id, professorDTO);
         return new ResponseEntity<>(updatedProfessor, HttpStatus.OK);
     }
 
     @DeleteMapping(value = "/delete/professor/{id}")
+    @ApiOperation(value = "Deleta um professor")
     public ResponseEntity<Void> deleteProfessor(@PathVariable Long id) {
         professorService.deleteProfessor(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -53,12 +55,14 @@ public class AdminApiController {
     }
 
     @PutMapping(value = "/update/study-area/{id}")
+    @ApiOperation(value = "Atualização da descrição de uma área de estudo")
     public ResponseEntity<StudyArea> updateStudyArea(@PathVariable Long id, @RequestBody StudyAreaDTO studyAreaDTO) {
         StudyArea updatedStudyArea = studyAreaService.updateStudyArea(id, studyAreaDTO);
         return new ResponseEntity<>(updatedStudyArea, HttpStatus.OK);
     }
 
     @DeleteMapping(value = "/delete/study-area/{id}")
+    @ApiOperation(value = "Deleção de uma área de estudo")
     public ResponseEntity<Void> deleteStudyArea(@PathVariable Long id) {
         studyAreaService.deleteStudyArea(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
