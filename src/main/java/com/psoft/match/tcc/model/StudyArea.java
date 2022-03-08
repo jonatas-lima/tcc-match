@@ -39,6 +39,26 @@ public class StudyArea {
         return description;
     }
 
+    public Collection<Student> getInterestedStudents() {
+        return interestedStudents;
+    }
+
+    public Collection<Professor> getInterestedProfessors() {
+        return interestedProfessors;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setInterestedStudents(Collection<Student> interestedStudents) {
+        this.interestedStudents = interestedStudents;
+    }
+
+    public void setInterestedProfessors(Collection<Professor> interestedProfessors) {
+        this.interestedProfessors = interestedProfessors;
+    }
+
     public boolean addInterestedStudent(Student student) {
         return this.interestedStudents.add(student);
     }
