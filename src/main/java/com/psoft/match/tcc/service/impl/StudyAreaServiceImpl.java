@@ -10,7 +10,9 @@ import com.psoft.match.tcc.util.exception.studyarea.StudyAreaAlreadyExistsExcept
 import com.psoft.match.tcc.util.exception.studyarea.StudyAreaNotFoundException;
 import com.psoft.match.tcc.util.exception.user.UserAlreadyExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+@Service
 public class StudyAreaServiceImpl implements StudyAreaService {
 
     @Autowired
