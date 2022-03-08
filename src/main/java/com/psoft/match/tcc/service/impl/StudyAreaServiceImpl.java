@@ -18,13 +18,18 @@ public class StudyAreaServiceImpl implements StudyAreaService {
     @Autowired
     private StudyAreaRepository studyAreaRepository;
 
+    @Override
     public StudyArea createStudyArea(StudyAreaDTO studyAreaDTO){
-        StudyArea studyArea = findStudyAreaByDescription(studyAreaDTO.getDescription());
+        StudyArea studyArea = studyAreaRepository.findByDescription(studyAreaDTO.getDescription()).orElse(null);
+        if (studyArea != null) {
+            throw new StudyAreaAlreadyExistsException(studyAreaDTO.getDescription());
+        }
 
         StudyArea newStudyArea = this.buildStudyArea(studyAreaDTO);
         return studyAreaRepository.save(newStudyArea);
     }
 
+    @Override
     public StudyArea updateStudyArea(Long id, StudyAreaDTO studyAreaDTO){
         StudyArea studyArea = this.findStudyAreaById(id);
         this.updateStudyArea(studyArea, studyAreaDTO);
@@ -32,26 +37,21 @@ public class StudyAreaServiceImpl implements StudyAreaService {
         return studyAreaRepository.save(studyArea);
     }
 
-   public void deleteStudyArea(Long id){
+    @Override
+    public void deleteStudyArea(Long id){
        StudyArea studyArea = this.findStudyAreaById(id);
        studyAreaRepository.delete(studyArea);
    }
 
-    public StudyArea buildStudyArea(StudyAreaDTO studyAreaDTO){
+    private StudyArea buildStudyArea(StudyAreaDTO studyAreaDTO){
         return new StudyArea(studyAreaDTO.getDescription());
     }
 
-    public StudyArea findStudyAreaByDescription(String description) {
-        return studyAreaRepository.findByDescription(description).orElseThrow(() -> new StudyAreaAlreadyExistsException(description));
-    }
-
-    public StudyArea findStudyAreaById(Long id) {
+    private StudyArea findStudyAreaById(Long id) {
         return studyAreaRepository.findById(id).orElseThrow(() -> new StudyAreaNotFoundException(id));
     }
 
-    public void updateStudyArea(StudyArea oldStudyArea, StudyAreaDTO newStudyArea){
+    private void updateStudyArea(StudyArea oldStudyArea, StudyAreaDTO newStudyArea){
         oldStudyArea.setDescription(newStudyArea.getDescription());
-        oldStudyArea.setInterestedStudents(newStudyArea.getInterestedStudents());
-        oldStudyArea.setInterestedProfessors(newStudyArea.getInterestedProfessors());
     }
 }
