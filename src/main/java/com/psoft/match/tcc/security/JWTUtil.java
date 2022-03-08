@@ -3,17 +3,19 @@ package com.psoft.match.tcc.security;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
 @Component
 public class JWTUtil {
 
-    private String SECRET = "SECRET";
+    @Value("${jwt.secret}")
+    private String SECRET;
 
-    private Long EXPIRATION_DATE = 1200000L;
+    @Value("${jwt.expiration}")
+    private Long EXPIRATION_DATE;
 
     public String generateToken(String username) {
         return Jwts.builder()
