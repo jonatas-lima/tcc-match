@@ -2,6 +2,18 @@ package com.psoft.match.tcc.model.user;
 
 public enum UserRole {
 
-    COMMON_USER,
-    ADMIN_USER
+    PROFESSOR("PROFESSOR"),
+    ADMIN("ADMIN"),
+    STUDENT("STUDENT");
+
+    private String description;
+
+    UserRole(String description) {
+        this.description = description;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
 }
