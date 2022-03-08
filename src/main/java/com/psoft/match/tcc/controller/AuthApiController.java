@@ -1,6 +1,7 @@
 package com.psoft.match.tcc.controller;
 
 import com.psoft.match.tcc.dto.CredentialsDTO;
+import com.psoft.match.tcc.model.user.User;
 import com.psoft.match.tcc.service.AuthService;
 import com.psoft.match.tcc.util.Constants;
 import io.swagger.annotations.Api;
@@ -22,5 +23,11 @@ public class AuthApiController {
     public ResponseEntity<String> authenticate(@RequestBody CredentialsDTO credentialsDTO) {
         String token = authService.login(credentialsDTO);
         return new ResponseEntity<>(token, HttpStatus.OK);
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<User> getLoggedUser() {
+        User loggedUser = authService.getLoggedUser();
+        return new ResponseEntity<>(loggedUser, HttpStatus.OK);
     }
 }

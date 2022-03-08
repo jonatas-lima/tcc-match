@@ -5,7 +5,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 import javax.servlet.FilterChain;
@@ -32,7 +31,6 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
         if (token != null) {
             UsernamePasswordAuthenticationToken auth = getAuthentication(token);
             if (auth != null) {
-                auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(req));
                 SecurityContextHolder.getContext().setAuthentication(auth);
             }
         }
@@ -46,7 +44,6 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
             UserDetails user = userDetailsService.loadUserByUsername(username);
             return new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
         }
-
         return null;
     }
 }
