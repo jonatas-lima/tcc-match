@@ -47,7 +47,7 @@ public class StudyAreaServiceImpl implements StudyAreaService {
         return new StudyArea(studyAreaDTO.getDescription());
     }
 
-    private StudyArea findStudyAreaById(Long id) {
+    public StudyArea findStudyAreaById(Long id) {
         return studyAreaRepository.findById(id).orElseThrow(() -> new StudyAreaNotFoundException(id));
     }
 

@@ -10,4 +10,6 @@ public interface StudyAreaService {
     StudyArea updateStudyArea(Long id, StudyAreaDTO studyAreaDTO);
 
     void deleteStudyArea(Long id);
+    
+    StudyArea findStudyAreaById(Long id);
 }
