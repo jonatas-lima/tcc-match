@@ -1,5 +1,6 @@
 package com.psoft.match.tcc.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.psoft.match.tcc.model.user.Professor;
 import com.psoft.match.tcc.model.user.Student;
 
@@ -17,9 +18,11 @@ public class StudyArea {
 
     private String description;
 
+    @JsonIgnore
     @ManyToMany(mappedBy = "interestedAreas")
     private Collection<Student> interestedStudents;
 
+    @JsonIgnore
     @ManyToMany(mappedBy = "interestedStudyAreas")
     private Collection<Professor> interestedProfessors;
 
