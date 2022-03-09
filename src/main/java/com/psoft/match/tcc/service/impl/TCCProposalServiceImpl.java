@@ -39,7 +39,7 @@ public class TCCProposalServiceImpl implements TCCProposalService{
 	@Transactional
 	@Override
 	public TCCProposal createTCCProposal(TCCProposalDTO tccProposal) {
-		List<StudyArea> areas = getAreasOfString(tccProposal.getIdsAreas());
+		List<StudyArea> areas = getAreasOfCollection(tccProposal.getIdsAreas());
 		TCCProposal tcc = new TCCProposal(tccProposal.getTittle(), tccProposal.getDescription());
 		for(StudyArea s : areas) {
 			tcc.addStudyArea(s);
@@ -48,7 +48,7 @@ public class TCCProposalServiceImpl implements TCCProposalService{
         return tcc;
 	}
 	
-	private List<StudyArea> getAreasOfString(Collection<Long> idsAreas) {
+	private List<StudyArea> getAreasOfCollection(Collection<Long> idsAreas) {
 		List<StudyArea> studyAreas = new ArrayList<StudyArea>();
 		for(Long l : idsAreas) {
 			studyAreas.add(studyAreaService.findStudyAreaById(l));

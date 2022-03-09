@@ -16,10 +16,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.psoft.match.tcc.dto.TCCProposalDTO;
 import com.psoft.match.tcc.model.StudyArea;
+import com.psoft.match.tcc.model.tcc.TCC;
 import com.psoft.match.tcc.model.tcc.TCCProposal;
 import com.psoft.match.tcc.model.user.Professor;
 import com.psoft.match.tcc.service.StudentService;
 import com.psoft.match.tcc.util.Constants;
+
+import io.swagger.annotations.ApiOperation;
 
 @RestController
 @RequestMapping(Constants.BASE_API_ENDPOINT + "/student")
@@ -30,20 +33,30 @@ public class StudentApiController {
 	private StudentService studentService;
 	
 	@PutMapping(value = "/update/{idStudyArea}")
+	@ApiOperation(value = "Adiciona uma área de estudo no estudante logado")
     public ResponseEntity<StudyArea> addStudyAreaOnStudent(@PathVariable Long idStudyArea) {
 		StudyArea addedStudyArea = studentService.addStudyAreaOnStudent(idStudyArea);
 		return new ResponseEntity<>(addedStudyArea, HttpStatus.OK);
 	}
 	
 	@GetMapping(value = "/list/professors}")
+	@ApiOperation(value = "Lista os professores que tem interesse nas áreas do estudante")
     public ResponseEntity<List<Professor>> listProfessorsInterested() {
 		List<Professor> professors = studentService.listProfessorsInterested();
 		return new ResponseEntity<>(professors, HttpStatus.OK);
 	}
 	
 	@PostMapping(value = "/creat/tccproposal}")
+	@ApiOperation(value = "Adiciona uma proposta de tcc no sistema")
     public ResponseEntity<TCCProposal> addTccProposal(@RequestBody TCCProposalDTO tccProposalDTO) {
 		TCCProposal tccProposal = studentService.addTccProposal(tccProposalDTO);
-    	return new ResponseEntity<TCCProposal>(tccProposal, HttpStatus.OK);
+    	return new ResponseEntity<TCCProposal>(tccProposal, HttpStatus.CREATED);
     }
+	
+	@GetMapping(value = "/list/tcc}")
+	@ApiOperation(value = "Lista os tccs cadastrados no sistema")
+    public ResponseEntity<List<TCC>> listTccs() {
+		List<TCC> tccs = studentService.listTccs();
+		return new ResponseEntity<List<TCC>>(tccs, HttpStatus.OK);
+	}
 }
