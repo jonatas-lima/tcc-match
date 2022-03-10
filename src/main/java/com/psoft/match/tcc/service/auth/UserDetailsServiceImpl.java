@@ -1,4 +1,4 @@
-package com.psoft.match.tcc.service.impl;
+package com.psoft.match.tcc.service.auth;
 
 import com.psoft.match.tcc.model.user.User;
 import com.psoft.match.tcc.repository.user.UserRepository;

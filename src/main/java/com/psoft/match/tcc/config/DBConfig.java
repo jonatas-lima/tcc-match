@@ -1,7 +1,7 @@
 package com.psoft.match.tcc.config;
 
-import com.psoft.match.tcc.service.DBService;
-import com.psoft.match.tcc.service.impl.TestDBService;
+import com.psoft.match.tcc.service.db.DBService;
+import com.psoft.match.tcc.service.db.TestDBService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

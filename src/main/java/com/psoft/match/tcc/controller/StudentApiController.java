@@ -6,7 +6,7 @@ import com.psoft.match.tcc.model.StudyArea;
 import com.psoft.match.tcc.model.tcc.TCC;
 import com.psoft.match.tcc.model.tcc.TCCProposal;
 import com.psoft.match.tcc.model.user.Professor;
-import com.psoft.match.tcc.service.StudentService;
+import com.psoft.match.tcc.service.user.StudentService;
 import com.psoft.match.tcc.util.Constants;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

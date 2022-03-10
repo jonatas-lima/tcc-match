@@ -1,4 +1,4 @@
-package com.psoft.match.tcc.service;
+package com.psoft.match.tcc.service.user;
 
 import com.psoft.match.tcc.dto.OrientationIssueDTO;
 import com.psoft.match.tcc.dto.TCCProposalDTO;

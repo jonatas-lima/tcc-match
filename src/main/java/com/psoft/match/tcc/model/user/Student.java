@@ -2,8 +2,8 @@ package com.psoft.match.tcc.model.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.psoft.match.tcc.model.StudyArea;
-import com.psoft.match.tcc.model.tcc.OrientationInterest;
-import com.psoft.match.tcc.model.tcc.OrientationIssue;
+import com.psoft.match.tcc.model.tcc.orientation.OrientationInterest;
+import com.psoft.match.tcc.model.tcc.orientation.OrientationIssue;
 import com.psoft.match.tcc.model.tcc.TCC;
 import com.psoft.match.tcc.model.tcc.TCCProposal;
 

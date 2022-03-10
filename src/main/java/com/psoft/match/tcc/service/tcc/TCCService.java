@@ -1,4 +1,4 @@
-package com.psoft.match.tcc.service;
+package com.psoft.match.tcc.service.tcc;
 
 import com.psoft.match.tcc.model.tcc.TCC;
 

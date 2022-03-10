@@ -2,11 +2,10 @@ package com.psoft.match.tcc.model.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.psoft.match.tcc.model.StudyArea;
-import com.psoft.match.tcc.model.tcc.OrientationProposal;
+import com.psoft.match.tcc.model.tcc.orientation.OrientationProposal;
 import com.psoft.match.tcc.model.tcc.TCC;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 

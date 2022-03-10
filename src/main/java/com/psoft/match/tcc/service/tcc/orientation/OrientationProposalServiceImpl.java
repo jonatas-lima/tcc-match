@@ -1,8 +1,8 @@
-package com.psoft.match.tcc.service.impl;
+package com.psoft.match.tcc.service.tcc.orientation;
 
-import com.psoft.match.tcc.model.tcc.OrientationProposal;
-import com.psoft.match.tcc.repository.tcc.OrientationProposalRepository;
-import com.psoft.match.tcc.service.OrientationProposalService;
+import com.psoft.match.tcc.model.tcc.orientation.OrientationProposal;
+import com.psoft.match.tcc.repository.tcc.orientation.OrientationProposalRepository;
+import com.psoft.match.tcc.service.tcc.orientation.OrientationProposalService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

@@ -1,16 +1,21 @@
-package com.psoft.match.tcc.service.impl;
+package com.psoft.match.tcc.service.user;
 
 import com.psoft.match.tcc.dto.OrientationIssueDTO;
 import com.psoft.match.tcc.dto.TCCProposalDTO;
 import com.psoft.match.tcc.model.StudyArea;
-import com.psoft.match.tcc.model.tcc.OrientationInterest;
-import com.psoft.match.tcc.model.tcc.OrientationIssue;
+import com.psoft.match.tcc.model.tcc.orientation.OrientationInterest;
+import com.psoft.match.tcc.model.tcc.orientation.OrientationIssue;
 import com.psoft.match.tcc.model.tcc.TCC;
 import com.psoft.match.tcc.model.tcc.TCCProposal;
 import com.psoft.match.tcc.model.user.Professor;
 import com.psoft.match.tcc.model.user.Student;
 import com.psoft.match.tcc.repository.user.StudentRepository;
-import com.psoft.match.tcc.service.*;
+import com.psoft.match.tcc.service.auth.AuthService;
+import com.psoft.match.tcc.service.tcc.TCCProposalService;
+import com.psoft.match.tcc.service.tcc.TCCService;
+import com.psoft.match.tcc.service.tcc.orientation.OrientationInterestService;
+import com.psoft.match.tcc.service.tcc.orientation.OrientationIssueService;
+import com.psoft.match.tcc.service.study_area.StudyAreaService;
 import com.psoft.match.tcc.util.exception.tcc.UnavailableTCCException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

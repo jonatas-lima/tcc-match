@@ -2,7 +2,7 @@ package com.psoft.match.tcc.controller;
 
 import com.psoft.match.tcc.dto.TCCDTO;
 import com.psoft.match.tcc.model.tcc.TCC;
-import com.psoft.match.tcc.service.ProfessorService;
+import com.psoft.match.tcc.service.user.ProfessorService;
 import com.psoft.match.tcc.util.Constants;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
