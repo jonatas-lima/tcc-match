@@ -49,9 +49,9 @@ public class TestDBService implements DBService {
     public void seed() {
         Admin admin = new Admin("admin", "admin@admim.com", "admin", passwordEncoder.encode("admin"));
 
-        Professor professor1 = new Professor("Elmar Melcher", "elmar@gmail.com", "elmar", passwordEncoder.encode("1234"));
-        Professor professor2 = new Professor("Francisco Vilar", "fubica@gmail.com", "fubica", passwordEncoder.encode("1234"));
-        Professor professor3 = new Professor("Joao Arthur", "joao.arthur@gmail.com", "joao_arthur", passwordEncoder.encode("1234"));
+        Professor professor1 = new Professor("Elmar Melcher", "elmar@gmail.com", "elmar", passwordEncoder.encode("1234"), 10);
+        Professor professor2 = new Professor("Francisco Vilar", "fubica@gmail.com", "fubica", passwordEncoder.encode("1234"), 2);
+        Professor professor3 = new Professor("Joao Arthur", "joao.arthur@gmail.com", "joao_arthur", passwordEncoder.encode("1234"), 0);
 
         Student student1 = new Student("Jonatas Ferreira de Lima", "119210036", "ferreiradelimajonatas@gmail.com", "2024.2", "jonatas", passwordEncoder.encode("1234"));
         Student student2 = new Student("Bernard Dantas Odon", "123", "bernard.odon@ccc.ufcg.edu.br", "2024.2", "bodon", passwordEncoder.encode("1234"));

@@ -14,9 +14,9 @@ public interface StudentService {
 
     Collection<Student> getAllStudents();
 
-	StudyArea addStudyAreaOnStudent(Long idStudyArea);
+	StudyArea addInterestedStudyArea(Long idStudyArea);
 	
-	List<Professor> listProfessorsInterested();
+	List<Professor> listInterestedProfessors();
 	
 	TCCProposal addTccProposal(TCCProposalDTO tcc);
 	

@@ -2,15 +2,16 @@ package com.psoft.match.tcc.service.impl;
 
 import com.psoft.match.tcc.dto.StudyAreaDTO;
 import com.psoft.match.tcc.model.StudyArea;
-import com.psoft.match.tcc.model.user.Professor;
-import com.psoft.match.tcc.model.user.User;
 import com.psoft.match.tcc.repository.StudyAreaRepository;
 import com.psoft.match.tcc.service.StudyAreaService;
 import com.psoft.match.tcc.util.exception.studyarea.StudyAreaAlreadyExistsException;
 import com.psoft.match.tcc.util.exception.studyarea.StudyAreaNotFoundException;
-import com.psoft.match.tcc.util.exception.user.UserAlreadyExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import javax.transaction.Transactional;
+import java.util.Collection;
+import java.util.List;
 
 @Service
 public class StudyAreaServiceImpl implements StudyAreaService {
@@ -18,6 +19,7 @@ public class StudyAreaServiceImpl implements StudyAreaService {
     @Autowired
     private StudyAreaRepository studyAreaRepository;
 
+    @Transactional
     @Override
     public StudyArea createStudyArea(StudyAreaDTO studyAreaDTO){
         StudyArea studyArea = studyAreaRepository.findByDescription(studyAreaDTO.getDescription()).orElse(null);
@@ -29,6 +31,7 @@ public class StudyAreaServiceImpl implements StudyAreaService {
         return studyAreaRepository.save(newStudyArea);
     }
 
+    @Transactional
     @Override
     public StudyArea updateStudyArea(Long id, StudyAreaDTO studyAreaDTO){
         StudyArea studyArea = this.findStudyAreaById(id);
@@ -37,6 +40,18 @@ public class StudyAreaServiceImpl implements StudyAreaService {
         return studyAreaRepository.save(studyArea);
     }
 
+    @Transactional
+    @Override
+    public StudyArea saveStudyArea(StudyArea studyArea) {
+        return studyAreaRepository.save(studyArea);
+    }
+
+    @Override
+    public List<StudyArea> findStudyAreasById(Collection<Long> studyAreasIds) {
+        return studyAreaRepository.findAllById(studyAreasIds);
+    }
+
+    @Transactional
     @Override
     public void deleteStudyArea(Long id){
        StudyArea studyArea = this.findStudyAreaById(id);
@@ -47,6 +62,7 @@ public class StudyAreaServiceImpl implements StudyAreaService {
         return new StudyArea(studyAreaDTO.getDescription());
     }
 
+    @Override
     public StudyArea findStudyAreaById(Long id) {
         return studyAreaRepository.findById(id).orElseThrow(() -> new StudyAreaNotFoundException(id));
     }

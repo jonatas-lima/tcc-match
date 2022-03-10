@@ -42,10 +42,14 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public User getLoggedUser() {
+    public <T extends User> T getLoggedUser() {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String username = principal instanceof UserDetails ? ((UserDetails) principal).getUsername() : principal.toString();
-        return userRepository.findByUsername(username).orElseThrow(NoOneLoggedException::new);
+        try {
+            return (T) userRepository.findByUsername(username).orElseThrow(NoOneLoggedException::new);
+        } catch (ClassCastException e) {
+            throw new RuntimeException();
+        }
     }
 
 }

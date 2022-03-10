@@ -6,18 +6,12 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 
 @Entity
 public class Professor extends User {
 
-    //private Collection<Lab> labs;
-	
 	private Integer quota;
 
     @ManyToMany
@@ -26,10 +20,10 @@ public class Professor extends User {
 
     public Professor() {}
 
-    public Professor(String fullName, String email, String username, String password) {
+    public Professor(String fullName, String email, String username, String password, Integer quota) {
         super(fullName, email, username, password, UserRole.PROFESSOR);
         this.interestedStudyAreas = new HashSet<>();
-        this.quota = 0;
+        this.quota = quota;
     }
 
     public boolean addInterestedStudyArea(StudyArea studyArea) {
