@@ -12,12 +12,15 @@ import com.psoft.match.tcc.util.exception.user.UserAlreadyExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+
 @Service
 public class StudyAreaServiceImpl implements StudyAreaService {
 
     @Autowired
     private StudyAreaRepository studyAreaRepository;
 
+    @Transactional
     @Override
     public StudyArea createStudyArea(StudyAreaDTO studyAreaDTO){
         StudyArea studyArea = studyAreaRepository.findByDescription(studyAreaDTO.getDescription()).orElse(null);
@@ -29,6 +32,7 @@ public class StudyAreaServiceImpl implements StudyAreaService {
         return studyAreaRepository.save(newStudyArea);
     }
 
+    @Transactional
     @Override
     public StudyArea updateStudyArea(Long id, StudyAreaDTO studyAreaDTO){
         StudyArea studyArea = this.findStudyAreaById(id);
@@ -37,6 +41,7 @@ public class StudyAreaServiceImpl implements StudyAreaService {
         return studyAreaRepository.save(studyArea);
     }
 
+    @Transactional
     @Override
     public void deleteStudyArea(Long id){
        StudyArea studyArea = this.findStudyAreaById(id);

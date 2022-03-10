@@ -2,14 +2,12 @@ package com.psoft.match.tcc.service.impl;
 
 import com.psoft.match.tcc.model.StudyArea;
 import com.psoft.match.tcc.model.tcc.TCC;
-import com.psoft.match.tcc.model.tcc.TCCProposal;
 import com.psoft.match.tcc.model.user.Admin;
 import com.psoft.match.tcc.model.user.Professor;
 import com.psoft.match.tcc.model.user.Student;
 import com.psoft.match.tcc.model.user.User;
 import com.psoft.match.tcc.repository.StudyAreaRepository;
-import com.psoft.match.tcc.repository.tcc.TCCProposalRepository;
-import com.psoft.match.tcc.repository.tcc.TCCRepository;
+import com.psoft.match.tcc.repository.TCCRepository;
 import com.psoft.match.tcc.repository.user.ProfessorRepository;
 import com.psoft.match.tcc.repository.user.StudentRepository;
 import com.psoft.match.tcc.repository.user.UserRepository;
@@ -35,9 +33,6 @@ public class TestDBService implements DBService {
 
     @Autowired
     private StudyAreaRepository studyAreaRepository;
-
-    @Autowired
-    private TCCProposalRepository tccProposalRepository;
 
     @Autowired
     private TCCRepository tccRepository;
@@ -99,25 +94,24 @@ public class TestDBService implements DBService {
         studentRepository.saveAll(students);
         studyAreaRepository.saveAll(studyAreas);
 
-        TCCProposal tccProposal1 = new TCCProposal("Proposta 1", "descricao da proposta 1");
-        TCCProposal tccProposal2 = new TCCProposal("Proposta 2", "descricao da proposta 2");
-        TCCProposal tccProposal3 = new TCCProposal("Proposta 3", "descricao da proposta 3");
+        TCC tcc1 = new TCC("Proposta 1", "descricao da proposta 1");
+        TCC tcc2 = new TCC("Proposta 2", "descricao da proposta 2");
+        TCC tcc3 = new TCC("Proposta 3", "descricao da proposta 3");
 
-        List<TCCProposal> tccProposals = Arrays.asList(tccProposal1, tccProposal2, tccProposal3);
-        tccProposalRepository.saveAll(tccProposals);
+        List<TCC> tccs = Arrays.asList(tcc1, tcc2, tcc3);
+        tcc1.addStudyArea(studyArea1);
+        tcc1.addStudyArea(studyArea2);
+        tcc2.addStudyArea(studyArea1);
 
-        tccProposal1.addStudyArea(studyArea1);
-        tccProposal1.addStudyArea(studyArea2);
+        tccRepository.saveAll(tccs);
 
-        tccProposal2.addStudyArea(studyArea1);
+        professor1.addOrientedTCC(tcc1);
+        tcc1.setProfessor(professor1);
+        student1.setTcc(tcc1);
+        tcc1.setStudent(student1);
 
-        tccProposalRepository.saveAll(tccProposals);
-
-        TCC tcc1 = new TCC(tccProposal1, professor1);
-        TCC tcc2 = new TCC(tccProposal2, professor2);
-
-        List<TCC> tccs = Arrays.asList(tcc1, tcc2);
-
+        professorRepository.save(professor1);
+        studentRepository.save(student1);
         tccRepository.saveAll(tccs);
     }
 }

@@ -1,11 +1,15 @@
 package com.psoft.match.tcc.service.impl;
 
 import com.psoft.match.tcc.dto.ProfessorDTO;
+import com.psoft.match.tcc.model.tcc.OrientationInterest;
+import com.psoft.match.tcc.model.tcc.TCC;
 import com.psoft.match.tcc.model.user.Professor;
 import com.psoft.match.tcc.model.user.User;
 import com.psoft.match.tcc.repository.user.ProfessorRepository;
 import com.psoft.match.tcc.repository.user.UserRepository;
+import com.psoft.match.tcc.service.AuthService;
 import com.psoft.match.tcc.service.ProfessorService;
+import com.psoft.match.tcc.service.TCCService;
 import com.psoft.match.tcc.util.exception.user.UserAlreadyExistsException;
 import com.psoft.match.tcc.util.exception.professor.ProfessorNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
