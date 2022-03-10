@@ -54,7 +54,7 @@ public class TCCProposal {
     }
 
     public TCCStatus getTccStatus() {
-        return tccStatus;
+        return this.tccStatus;
     }
 
     public void setTccStatus(TCCStatus tccStatus) {

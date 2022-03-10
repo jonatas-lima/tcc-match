@@ -6,8 +6,12 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 
 @Entity
 public class Student extends User {
@@ -55,5 +59,9 @@ public class Student extends User {
 
     public boolean removeInterestedArea(StudyArea studyArea) {
         return this.interestedAreas.remove(studyArea);
+    }
+    
+    public Collection<StudyArea> getStudyAreas() {
+    	return this.interestedAreas;
     }
 }

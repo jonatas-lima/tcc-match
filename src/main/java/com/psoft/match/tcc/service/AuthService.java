@@ -7,5 +7,5 @@ public interface AuthService {
 
     String login(CredentialsDTO credentialsDTO);
 
-    User getLoggedUser();
+    <T extends User> T getLoggedUser();
 }

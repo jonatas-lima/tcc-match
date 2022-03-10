@@ -1,19 +1,22 @@
 package com.psoft.match.tcc.service.impl;
 
 import com.psoft.match.tcc.dto.ProfessorDTO;
+import com.psoft.match.tcc.model.StudyArea;
 import com.psoft.match.tcc.model.user.Professor;
+import com.psoft.match.tcc.model.user.Student;
 import com.psoft.match.tcc.model.user.User;
 import com.psoft.match.tcc.repository.user.ProfessorRepository;
 import com.psoft.match.tcc.repository.user.UserRepository;
 import com.psoft.match.tcc.service.ProfessorService;
-import com.psoft.match.tcc.util.exception.user.UserAlreadyExistsException;
 import com.psoft.match.tcc.util.exception.professor.ProfessorNotFoundException;
+import com.psoft.match.tcc.util.exception.user.UserAlreadyExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ProfessorServiceImpl implements ProfessorService {
@@ -30,6 +33,32 @@ public class ProfessorServiceImpl implements ProfessorService {
     @Override
     public List<Professor> getAllProfessors() {
         return professorRepository.findAll();
+    }
+
+    @Override
+    public List<Professor> getAvailableProfessors() {
+        return professorRepository
+                .findAll()
+                .stream()
+                .filter(professor -> professor.getQuota() > 0)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Professor> getAvailableProfessorsWithSharedInterests(Student student) {
+        return this.getAvailableProfessors()
+                .stream()
+                .filter(professor -> this.hasSharedInterest(professor, student))
+                .collect(Collectors.toList());
+    }
+
+    private boolean hasSharedInterest(Professor professor, Student student) {
+        for(StudyArea s : student.getStudyAreas()) {
+            if (professor.getStudyAreas().contains(s)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
@@ -68,7 +97,7 @@ public class ProfessorServiceImpl implements ProfessorService {
 
     private Professor buildProfessor(ProfessorDTO professorDTO) {
         String encryptedPassword = passwordEncoder.encode(professorDTO.getPassword());
-        return new Professor(professorDTO.getFullName(), professorDTO.getEmail(), professorDTO.getUsername(), encryptedPassword);
+        return new Professor(professorDTO.getFullName(), professorDTO.getEmail(), professorDTO.getUsername(), encryptedPassword, professorDTO.getQuota());
     }
 
     private void updateProfessor(Professor oldProfessor, ProfessorDTO newProfessor) {

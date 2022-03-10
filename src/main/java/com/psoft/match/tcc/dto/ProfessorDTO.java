@@ -14,6 +14,8 @@ public class ProfessorDTO {
 
     private String password;
 
+    private Integer quota;
+
     public String getFullName() {
         return fullName;
     }
@@ -32,5 +34,9 @@ public class ProfessorDTO {
 
     public String getPassword() {
         return password;
+    }
+
+    public Integer getQuota() {
+        return quota;
     }
 }
