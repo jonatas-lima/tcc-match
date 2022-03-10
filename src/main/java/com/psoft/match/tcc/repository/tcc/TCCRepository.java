@@ -1,4 +1,4 @@
-package com.psoft.match.tcc.repository;
+package com.psoft.match.tcc.repository.tcc;
 
 import com.psoft.match.tcc.model.tcc.TCC;
 import org.springframework.data.jpa.repository.JpaRepository;

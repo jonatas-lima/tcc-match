@@ -2,7 +2,7 @@ package com.psoft.match.tcc.service.impl;
 
 import com.psoft.match.tcc.model.tcc.OrientationInterest;
 import com.psoft.match.tcc.model.tcc.TCC;
-import com.psoft.match.tcc.repository.OrientationInterestRepository;
+import com.psoft.match.tcc.repository.tcc.OrientationInterestRepository;
 import com.psoft.match.tcc.service.OrientationInterestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

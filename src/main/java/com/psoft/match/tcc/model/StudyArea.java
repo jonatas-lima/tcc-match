@@ -19,7 +19,7 @@ public class StudyArea {
     private String description;
 
     @JsonIgnore
-    @ManyToMany(mappedBy = "interestedAreas")
+    @ManyToMany(mappedBy = "interestedStudyAreas")
     private Collection<Student> interestedStudents;
 
     @JsonIgnore
@@ -76,6 +76,10 @@ public class StudyArea {
 
     public boolean removeInterestedProfessor(Professor professor) {
         return this.interestedProfessors.remove(professor);
+    }
+
+    public void notifyStudent() {
+        this.interestedStudents.forEach(student -> student.notifyNewTCC(description));
     }
 
     @Override

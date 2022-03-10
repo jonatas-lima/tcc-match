@@ -1,10 +1,11 @@
 package com.psoft.match.tcc.model.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.psoft.match.tcc.model.StudyArea;
 import com.psoft.match.tcc.model.tcc.OrientationInterest;
 import com.psoft.match.tcc.model.tcc.OrientationIssue;
-import com.psoft.match.tcc.model.StudyArea;
 import com.psoft.match.tcc.model.tcc.TCC;
+import com.psoft.match.tcc.model.tcc.TCCProposal;
 
 import javax.persistence.*;
 import java.util.Collection;
@@ -23,13 +24,16 @@ public class Student extends User {
     @OneToMany(mappedBy = "interestedStudent")
     private Collection<OrientationInterest> orientationInterests;
 
+    @OneToMany(mappedBy = "student")
+    private Collection<TCCProposal> tccProposals;
+
     @JsonIgnore
     @OneToOne
     private TCC tcc;
 
     @ManyToMany
     @JoinTable(joinColumns = @JoinColumn(name = "student_id"), inverseJoinColumns = @JoinColumn(name = "study_area_id"))
-    private Collection<StudyArea> interestedAreas;
+    private Collection<StudyArea> interestedStudyAreas;
 
     public Student() {}
 
@@ -37,9 +41,10 @@ public class Student extends User {
         super(fullName, email, username, password, UserRole.STUDENT);
         this.registration = registration;
         this.expectedConclusionTerm = expectedConclusionTerm;
-        this.interestedAreas = new HashSet<>();
+        this.interestedStudyAreas = new HashSet<>();
         this.orientationIssues = new HashSet<>();
         this.orientationInterests = new HashSet<>();
+        this.tccProposals = new HashSet<>();
         this.tcc = null;
     }
 
@@ -59,16 +64,16 @@ public class Student extends User {
         this.expectedConclusionTerm = expectedConclusionTerm;
     }
 
-    public Collection<StudyArea> getInterestedAreas() {
-        return interestedAreas;
+    public Collection<StudyArea> getInterestedStudyAreas() {
+        return interestedStudyAreas;
     }
 
     public boolean addInterestedArea(StudyArea studyArea) {
-        return this.interestedAreas.add(studyArea);
+        return this.interestedStudyAreas.add(studyArea);
     }
 
     public boolean removeInterestedArea(StudyArea studyArea) {
-        return this.interestedAreas.remove(studyArea);
+        return this.interestedStudyAreas.remove(studyArea);
     }
 
     public Collection<OrientationIssue> getOrientationIssues() {
@@ -91,6 +96,18 @@ public class Student extends User {
         return this.orientationInterests.remove(orientationInterest);
     }
 
+    public Collection<TCCProposal> getTccProposals() {
+        return tccProposals;
+    }
+
+    public boolean addTccProposal(TCCProposal tccProposal) {
+        return this.tccProposals.add(tccProposal);
+    }
+
+    public boolean removeOrientationInterest(TCCProposal tccProposal) {
+        return this.tccProposals.remove(tccProposal);
+    }
+
     public TCC getTcc() {
         return tcc;
     }
@@ -99,7 +116,7 @@ public class Student extends User {
         this.tcc = tcc;
     }
 
-    public void notifyNewTCC(StudyArea studyArea) {
-        System.out.printf("novo tcc com a area de estudo %s cadastrada!", studyArea.getDescription());
+    public void notifyNewTCC(String studyAreaDescription) {
+        System.out.printf("%s : Novo TCC cadastrado na área %s\n", getFullName(), studyAreaDescription);
     }
 }

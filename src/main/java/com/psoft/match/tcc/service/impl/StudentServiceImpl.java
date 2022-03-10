@@ -1,19 +1,23 @@
 package com.psoft.match.tcc.service.impl;
 
 import com.psoft.match.tcc.dto.OrientationIssueDTO;
+import com.psoft.match.tcc.dto.TCCProposalDTO;
+import com.psoft.match.tcc.model.StudyArea;
 import com.psoft.match.tcc.model.tcc.OrientationInterest;
 import com.psoft.match.tcc.model.tcc.OrientationIssue;
 import com.psoft.match.tcc.model.tcc.TCC;
+import com.psoft.match.tcc.model.tcc.TCCProposal;
+import com.psoft.match.tcc.model.user.Professor;
 import com.psoft.match.tcc.model.user.Student;
 import com.psoft.match.tcc.repository.user.StudentRepository;
 import com.psoft.match.tcc.service.*;
-import com.psoft.match.tcc.util.exception.tcc.TCCDoesNotBelongToStudentException;
 import com.psoft.match.tcc.util.exception.tcc.UnavailableTCCException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.Collection;
+import java.util.List;
 
 @Service
 public class StudentServiceImpl implements StudentService {
@@ -25,6 +29,9 @@ public class StudentServiceImpl implements StudentService {
     private TCCService tccService;
 
     @Autowired
+    private StudyAreaService studyAreaService;
+
+    @Autowired
     private AuthService authService;
 
     @Autowired
@@ -33,6 +40,12 @@ public class StudentServiceImpl implements StudentService {
     @Autowired
     private OrientationInterestService orientationInterestService;
 
+    @Autowired
+    private ProfessorService professorService;
+
+    @Autowired
+    private TCCProposalService tccProposalService;
+
     @Override
     public Collection<Student> getAllStudents() {
         return studentRepository.findAll();
@@ -40,20 +53,16 @@ public class StudentServiceImpl implements StudentService {
 
     @Transactional
     @Override
-    public void performTccOrientationIssue(Long tccId, OrientationIssueDTO orientationIssueDTO) {
+    public void performTccOrientationIssue(OrientationIssueDTO orientationIssueDTO) {
         Student student = authService.getLoggedUser();
-        TCC issuedTcc = tccService.findTCCById(tccId);
+        TCC tcc = student.getTcc();
 
-        if (!issuedTcc.equals(student.getTcc())) {
-            throw new TCCDoesNotBelongToStudentException(student.getFullName(), tccId);
-        }
-
-        OrientationIssue orientationIssue = new OrientationIssue(orientationIssueDTO.getRelatedIssue(), student, student.getTcc());
+        OrientationIssue orientationIssue = new OrientationIssue(orientationIssueDTO.getRelatedIssue(), student, tcc);
         student.addOrientationIssue(orientationIssue);
 
         orientationIssueService.saveOrientationIssue(orientationIssue);
         studentRepository.save(student);
-        tccService.saveTCC(issuedTcc);
+        tccService.saveTCC(tcc);
     }
 
     @Transactional
@@ -73,4 +82,33 @@ public class StudentServiceImpl implements StudentService {
         studentRepository.save(student);
     }
 
+	@Override
+	public StudyArea addInterestedStudyArea(Long idStudyArea) {
+		StudyArea studyArea = studyAreaService.findStudyAreaById(idStudyArea);
+		Student student = authService.getLoggedUser();
+
+		student.addInterestedArea(studyArea);
+		studyArea.addInterestedStudent(student);
+
+		studyAreaService.saveStudyArea(studyArea);
+		studentRepository.save(student);
+		return studyArea;
+	}
+
+	@Override
+	public List<Professor> listInterestedProfessors() {
+		Student user = authService.getLoggedUser();
+		return professorService.getAvailableProfessorsWithSharedInterests(user);
+	}
+
+	@Override
+	public TCCProposal addTccProposal(TCCProposalDTO tcc) {
+        Student student = authService.getLoggedUser();
+		return tccProposalService.createTCCProposal(tcc, student);
+	}
+
+	@Override
+	public List<TCC> listTccs() {
+		return tccService.getAllTccs();
+	}
 }

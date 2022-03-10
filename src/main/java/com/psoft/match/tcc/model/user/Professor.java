@@ -1,8 +1,8 @@
 package com.psoft.match.tcc.model.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.psoft.match.tcc.model.tcc.OrientationInterest;
 import com.psoft.match.tcc.model.StudyArea;
+import com.psoft.match.tcc.model.tcc.OrientationProposal;
 import com.psoft.match.tcc.model.tcc.TCC;
 
 import javax.persistence.*;
@@ -13,15 +13,20 @@ import java.util.HashSet;
 @Entity
 public class Professor extends User {
 
+    @JsonIgnore
     @ElementCollection
     private Collection<String> labs;
 
+	private Integer quota;
+
+    @JsonIgnore
     @ManyToMany
     @JoinTable(joinColumns = @JoinColumn(name = "professor_id"), inverseJoinColumns = @JoinColumn(name = "study_area_id"))
     private Collection<StudyArea> interestedStudyAreas;
 
+    @JsonIgnore
     @OneToMany
-    private Collection<OrientationInterest> interestedTCCs;
+    private Collection<OrientationProposal> interestedTCCs;
 
     @JsonIgnore
     @OneToMany
@@ -29,12 +34,13 @@ public class Professor extends User {
 
     public Professor() {}
 
-    public Professor(String fullName, String email, String username, String password) {
+    public Professor(String fullName, String email, String username, String password, Collection<String> labs, Integer quota) {
         super(fullName, email, username, password, UserRole.PROFESSOR);
         this.interestedStudyAreas = new HashSet<>();
         this.interestedTCCs = new HashSet<>();
-        this.labs = new ArrayList<>();
+        this.labs = labs;
         this.orientedTCCs = new HashSet<>();
+        this.quota = quota;
     }
 
     public Collection<StudyArea> getInterestedStudyAreas() {
@@ -61,15 +67,15 @@ public class Professor extends User {
         this.labs.remove(lab);
     }
 
-    public Collection<OrientationInterest> getInterestedTCCs() {
+    public Collection<OrientationProposal> getInterestedTCCs() {
         return interestedTCCs;
     }
 
-    public boolean addOrientationInterest(OrientationInterest orientationInterest) {
+    public boolean addOrientationInterest(OrientationProposal orientationInterest) {
         return this.interestedTCCs.add(orientationInterest);
     }
 
-    public boolean removeOrientationInterest(OrientationInterest orientationInterest) {
+    public boolean removeOrientationInterest(OrientationProposal orientationInterest) {
         return this.interestedTCCs.remove(orientationInterest);
     }
 
@@ -83,5 +89,21 @@ public class Professor extends User {
 
     public boolean removeOrientedTCC(TCC tcc) {
         return this.orientedTCCs.remove(tcc);
+    }
+
+    public Integer getQuota() {
+        return quota;
+    }
+
+    public void setQuota(Integer quota) {
+        this.quota = quota;
+    }
+
+    public void decrementQuota() {
+        this.quota--;
+    }
+
+    public void incrementQuota() {
+        this.quota++;
     }
 }

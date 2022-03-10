@@ -1,7 +1,7 @@
 package com.psoft.match.tcc.service.impl;
 
 import com.psoft.match.tcc.model.tcc.TCC;
-import com.psoft.match.tcc.repository.TCCRepository;
+import com.psoft.match.tcc.repository.tcc.TCCRepository;
 import com.psoft.match.tcc.service.TCCService;
 import com.psoft.match.tcc.util.exception.tcc.TCCNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +15,11 @@ public class TCCServiceImpl implements TCCService {
 
     @Autowired
     private TCCRepository tccRepository;
+
+    @Override
+    public List<TCC> getAllTccs() {
+        return tccRepository.findAll();
+    }
 
     @Override
     public TCC findTCCById(Long id) {

@@ -17,10 +17,13 @@ public abstract class User {
 
     private String email;
 
+    @JsonIgnore
     private String username;
 
+    @JsonIgnore
     private String password;
 
+    @JsonIgnore
     private UserRole role;
 
     public User() {}

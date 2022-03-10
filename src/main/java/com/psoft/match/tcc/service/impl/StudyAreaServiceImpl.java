@@ -2,17 +2,16 @@ package com.psoft.match.tcc.service.impl;
 
 import com.psoft.match.tcc.dto.StudyAreaDTO;
 import com.psoft.match.tcc.model.StudyArea;
-import com.psoft.match.tcc.model.user.Professor;
-import com.psoft.match.tcc.model.user.User;
 import com.psoft.match.tcc.repository.StudyAreaRepository;
 import com.psoft.match.tcc.service.StudyAreaService;
 import com.psoft.match.tcc.util.exception.studyarea.StudyAreaAlreadyExistsException;
 import com.psoft.match.tcc.util.exception.studyarea.StudyAreaNotFoundException;
-import com.psoft.match.tcc.util.exception.user.UserAlreadyExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.Collection;
+import java.util.List;
 
 @Service
 public class StudyAreaServiceImpl implements StudyAreaService {
@@ -43,6 +42,17 @@ public class StudyAreaServiceImpl implements StudyAreaService {
 
     @Transactional
     @Override
+    public StudyArea saveStudyArea(StudyArea studyArea) {
+        return studyAreaRepository.save(studyArea);
+    }
+
+    @Override
+    public List<StudyArea> findStudyAreasById(Collection<Long> studyAreasIds) {
+        return studyAreaRepository.findAllById(studyAreasIds);
+    }
+
+    @Transactional
+    @Override
     public void deleteStudyArea(Long id){
        StudyArea studyArea = this.findStudyAreaById(id);
        studyAreaRepository.delete(studyArea);
@@ -52,7 +62,8 @@ public class StudyAreaServiceImpl implements StudyAreaService {
         return new StudyArea(studyAreaDTO.getDescription());
     }
 
-    private StudyArea findStudyAreaById(Long id) {
+    @Override
+    public StudyArea findStudyAreaById(Long id) {
         return studyAreaRepository.findById(id).orElseThrow(() -> new StudyAreaNotFoundException(id));
     }
 

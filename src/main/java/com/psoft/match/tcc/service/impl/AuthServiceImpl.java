@@ -45,9 +45,8 @@ public class AuthServiceImpl implements AuthService {
     public <T extends User> T getLoggedUser() {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String username = principal instanceof UserDetails ? ((UserDetails) principal).getUsername() : principal.toString();
-        User user = userRepository.findByUsername(username).orElseThrow(NoOneLoggedException::new);
         try {
-            return (T) user;
+            return (T) userRepository.findByUsername(username).orElseThrow(NoOneLoggedException::new);
         } catch (ClassCastException e) {
             throw new RuntimeException();
         }
