@@ -61,9 +61,7 @@ public class Student extends User {
         return this.interestedAreas.remove(studyArea);
     }
     
-    public Collection<StudyArea> getClonnedAreas() {
-    	//List<StudyArea> clone = new ArrayList<StudyArea>();
-    	//Collections.copy((List<StudyArea>) interestedAreas, clone);
+    public Collection<StudyArea> getStudyAreas() {
     	return this.interestedAreas;
     }
 }

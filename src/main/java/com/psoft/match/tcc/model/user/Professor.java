@@ -48,9 +48,7 @@ public class Professor extends User {
     	this.quota = newQuota;
     }
     
-    public Collection<StudyArea> getClonnedAreas() {
-    	//List<StudyArea> clone = new ArrayList<StudyArea>();
-    	//Collections.copy((List<StudyArea>) interestedStudyAreas, clone);
+    public Collection<StudyArea> getStudyAreas() {
     	return this.interestedStudyAreas;
     }
 }

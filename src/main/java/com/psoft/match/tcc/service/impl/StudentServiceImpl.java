@@ -61,7 +61,7 @@ public class StudentServiceImpl implements StudentService {
 		for(Professor p: professorsOnSystem) {
 			if(p.getQuota() == 0) {
 				continue;
-			} else if(haveSharedInterests(p.getClonnedAreas(), user.getClonnedAreas())) {
+			} else if(haveSharedInterests(p.getStudyAreas(), user.getStudyAreas())) {
 				professorsToReturn.add(p);
 			}
 		}
