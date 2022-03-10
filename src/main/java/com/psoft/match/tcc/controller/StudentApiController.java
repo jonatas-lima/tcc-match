@@ -32,28 +32,28 @@ public class StudentApiController {
 	@Autowired
 	private StudentService studentService;
 	
-	@PutMapping(value = "/update/{idStudyArea}")
+	@PutMapping(value = "/study_area/{idStudyArea}")
 	@ApiOperation(value = "Adiciona uma área de estudo no estudante logado")
-    public ResponseEntity<StudyArea> addStudyAreaOnStudent(@PathVariable Long idStudyArea) {
-		StudyArea addedStudyArea = studentService.addStudyAreaOnStudent(idStudyArea);
+    public ResponseEntity<StudyArea> addInterestedStudyArea(@PathVariable Long idStudyArea) {
+		StudyArea addedStudyArea = studentService.addInterestedStudyArea(idStudyArea);
 		return new ResponseEntity<>(addedStudyArea, HttpStatus.OK);
 	}
 	
-	@GetMapping(value = "/list/professors}")
+	@GetMapping(value = "/professors")
 	@ApiOperation(value = "Lista os professores que tem interesse nas áreas do estudante")
-    public ResponseEntity<List<Professor>> listProfessorsInterested() {
-		List<Professor> professors = studentService.listProfessorsInterested();
+    public ResponseEntity<List<Professor>> listInterestedProfessors() {
+		List<Professor> professors = studentService.listInterestedProfessors();
 		return new ResponseEntity<>(professors, HttpStatus.OK);
 	}
 	
-	@PostMapping(value = "/creat/tccproposal}")
+	@PostMapping(value = "/tcc_proposal")
 	@ApiOperation(value = "Adiciona uma proposta de tcc no sistema")
     public ResponseEntity<TCCProposal> addTccProposal(@RequestBody TCCProposalDTO tccProposalDTO) {
 		TCCProposal tccProposal = studentService.addTccProposal(tccProposalDTO);
     	return new ResponseEntity<TCCProposal>(tccProposal, HttpStatus.CREATED);
     }
 	
-	@GetMapping(value = "/list/tcc}")
+	@GetMapping(value = "/tcc}")
 	@ApiOperation(value = "Lista os tccs cadastrados no sistema")
     public ResponseEntity<List<TCC>> listTccs() {
 		List<TCC> tccs = studentService.listTccs();
