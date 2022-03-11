@@ -1,6 +1,8 @@
 package com.psoft.match.tcc.util.exception.tcc;
 
-public class UnavailableTCCException extends RuntimeException {
+import com.psoft.match.tcc.util.exception.common.BadRequestException;
+
+public class UnavailableTCCException extends BadRequestException {
 
     private static final String UNAVAILABLE_TCC_MSG = "The TCC with id %d is not available.";
 

@@ -1,6 +1,8 @@
 package com.psoft.match.tcc.util.exception.tcc;
 
-public class TCCNotFoundException extends RuntimeException {
+import javax.persistence.EntityNotFoundException;
+
+public class TCCNotFoundException extends EntityNotFoundException {
 
     private static final String TCC_NOT_FOUND_MSG = "TCC with id %d not found.";
 

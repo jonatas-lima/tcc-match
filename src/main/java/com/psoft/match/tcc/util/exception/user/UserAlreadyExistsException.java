@@ -1,6 +1,8 @@
 package com.psoft.match.tcc.util.exception.user;
 
-public class UserAlreadyExistsException extends RuntimeException {
+import com.psoft.match.tcc.util.exception.common.ConflictException;
+
+public class UserAlreadyExistsException extends ConflictException {
 
     private static final String USER_ALREADY_EXISTS_MSG = "User with email %s already exists.";
 

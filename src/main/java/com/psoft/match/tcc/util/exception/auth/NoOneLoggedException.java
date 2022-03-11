@@ -1,6 +1,8 @@
 package com.psoft.match.tcc.util.exception.auth;
 
-public class NoOneLoggedException extends RuntimeException {
+import com.psoft.match.tcc.util.exception.common.BadRequestException;
+
+public class NoOneLoggedException extends BadRequestException {
 
     public NoOneLoggedException() {
         super("There is no user logged.");

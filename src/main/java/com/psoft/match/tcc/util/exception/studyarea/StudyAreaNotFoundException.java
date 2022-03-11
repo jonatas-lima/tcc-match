@@ -1,6 +1,8 @@
 package com.psoft.match.tcc.util.exception.studyarea;
 
-public class StudyAreaNotFoundException extends RuntimeException{
+import javax.persistence.EntityNotFoundException;
+
+public class StudyAreaNotFoundException extends EntityNotFoundException  {
     private static final String STUDY_AREA_NOT_FOUND_MSG = "Study area with id %d not found.";
     private static final String STUDY_AREA_DESCRIPTION_NOT_FOUND_MSG = "Study area with description %s not found.";
 
