@@ -3,7 +3,7 @@ package com.psoft.match.tcc.model.user;
 import javax.persistence.Entity;
 
 @Entity
-public class Admin extends User {
+public class Admin extends TCCMatchUser {
 
     public Admin() {}
 

@@ -2,7 +2,6 @@ package com.psoft.match.tcc.service.tcc;
 
 import com.psoft.match.tcc.model.tcc.TCC;
 import com.psoft.match.tcc.repository.tcc.TCCRepository;
-import com.psoft.match.tcc.service.tcc.TCCService;
 import com.psoft.match.tcc.util.exception.tcc.TCCNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

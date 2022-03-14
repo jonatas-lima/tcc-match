@@ -6,7 +6,7 @@ import com.psoft.match.tcc.model.tcc.TCCProposal;
 import com.psoft.match.tcc.model.user.Student;
 import com.psoft.match.tcc.repository.tcc.TCCProposalRepository;
 import com.psoft.match.tcc.service.study_area.StudyAreaService;
-import com.psoft.match.tcc.util.exception.tccproposal.TCCProposalNotFoundException;
+import com.psoft.match.tcc.util.exception.tcc.TCCProposalNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

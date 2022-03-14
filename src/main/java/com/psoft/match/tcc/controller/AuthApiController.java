@@ -1,7 +1,7 @@
 package com.psoft.match.tcc.controller;
 
 import com.psoft.match.tcc.dto.CredentialsDTO;
-import com.psoft.match.tcc.model.user.User;
+import com.psoft.match.tcc.model.user.TCCMatchUser;
 import com.psoft.match.tcc.service.auth.AuthService;
 import com.psoft.match.tcc.util.Constants;
 import io.swagger.annotations.Api;
@@ -26,8 +26,8 @@ public class AuthApiController {
     }
 
     @GetMapping("/me")
-    public ResponseEntity<User> getLoggedUser() {
-        User loggedUser = authService.getLoggedUser();
+    public ResponseEntity<TCCMatchUser> getLoggedUser() {
+        TCCMatchUser loggedUser = authService.getLoggedUser();
         return new ResponseEntity<>(loggedUser, HttpStatus.OK);
     }
 }

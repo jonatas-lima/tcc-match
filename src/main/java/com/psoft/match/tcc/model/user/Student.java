@@ -12,7 +12,7 @@ import java.util.Collection;
 import java.util.HashSet;
 
 @Entity
-public class Student extends User {
+public class Student extends TCCMatchUser {
 
     private String registration;
 

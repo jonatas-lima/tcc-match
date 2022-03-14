@@ -9,7 +9,4 @@ import java.util.Optional;
 
 @Repository
 public interface OrientationProposalRepository extends JpaRepository<OrientationProposal, Long> {
-
-    Optional<OrientationProposal> findByInterestedProposal(TCCProposal tccProposal);
-
 }

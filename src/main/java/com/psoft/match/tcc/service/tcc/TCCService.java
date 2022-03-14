@@ -1,6 +1,8 @@
 package com.psoft.match.tcc.service.tcc;
 
+import com.psoft.match.tcc.dto.TCCDTO;
 import com.psoft.match.tcc.model.tcc.TCC;
+import com.psoft.match.tcc.model.user.Professor;
 
 import java.util.List;
 

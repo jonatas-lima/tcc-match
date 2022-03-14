@@ -1,4 +1,4 @@
-package com.psoft.match.tcc.util.exception.tccproposal;
+package com.psoft.match.tcc.util.exception.tcc;
 
 import javax.persistence.EntityNotFoundException;
 

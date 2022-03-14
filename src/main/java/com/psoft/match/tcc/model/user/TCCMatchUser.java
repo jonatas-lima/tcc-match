@@ -7,7 +7,7 @@ import java.util.Objects;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-public abstract class User {
+public abstract class TCCMatchUser {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,9 +26,9 @@ public abstract class User {
     @JsonIgnore
     private UserRole role;
 
-    public User() {}
+    public TCCMatchUser() {}
 
-    public User(String fullName, String email, String username, String password, UserRole role) {
+    public TCCMatchUser(String fullName, String email, String username, String password, UserRole role) {
         this.fullName = fullName;
         this.email = email;
         this.username = username;
@@ -85,7 +85,7 @@ public abstract class User {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        User user = (User) o;
+        TCCMatchUser user = (TCCMatchUser) o;
         return email.equals(user.email);
     }
 

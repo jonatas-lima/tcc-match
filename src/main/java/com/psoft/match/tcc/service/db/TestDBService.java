@@ -5,7 +5,7 @@ import com.psoft.match.tcc.model.tcc.TCC;
 import com.psoft.match.tcc.model.user.Admin;
 import com.psoft.match.tcc.model.user.Professor;
 import com.psoft.match.tcc.model.user.Student;
-import com.psoft.match.tcc.model.user.User;
+import com.psoft.match.tcc.model.user.TCCMatchUser;
 import com.psoft.match.tcc.repository.StudyAreaRepository;
 import com.psoft.match.tcc.repository.tcc.TCCRepository;
 import com.psoft.match.tcc.repository.user.ProfessorRepository;
@@ -13,13 +13,13 @@ import com.psoft.match.tcc.repository.user.StudentRepository;
 import com.psoft.match.tcc.repository.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-@Service
+@Component
 public class TestDBService implements DBService {
 
     @Autowired
@@ -51,7 +51,7 @@ public class TestDBService implements DBService {
         Student student1 = new Student("Jonatas Ferreira de Lima", "119210036", "ferreiradelimajonatas@gmail.com", "2024.2", "jonatas", passwordEncoder.encode("1234"));
         Student student2 = new Student("Bernard Dantas Odon", "123", "bernard.odon@ccc.ufcg.edu.br", "2024.2", "bodon", passwordEncoder.encode("1234"));
 
-        List<User> users = Arrays.asList(admin, student1, student2, professor1);
+        List<TCCMatchUser> users = Arrays.asList(admin, student1, student2, professor1);
 
         List<Student> students = Arrays.asList(student1, student2);
         List<Professor> professors = Arrays.asList(professor1, professor2, professor3);

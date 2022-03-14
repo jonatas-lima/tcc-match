@@ -8,7 +8,7 @@ import com.psoft.match.tcc.model.tcc.TCC;
 import com.psoft.match.tcc.model.tcc.TCCProposal;
 import com.psoft.match.tcc.model.user.Professor;
 import com.psoft.match.tcc.model.user.Student;
-import com.psoft.match.tcc.model.user.User;
+import com.psoft.match.tcc.model.user.TCCMatchUser;
 import com.psoft.match.tcc.repository.user.ProfessorRepository;
 import com.psoft.match.tcc.repository.user.UserRepository;
 import com.psoft.match.tcc.service.auth.AuthService;
@@ -93,7 +93,7 @@ public class ProfessorServiceImpl implements ProfessorService {
     @Transactional
     @Override
     public Professor createProfessor(ProfessorDTO professorDTO) {
-        User user = userRepository.findUserByEmail(professorDTO.getEmail()).orElse(null);
+        TCCMatchUser user = userRepository.findUserByEmail(professorDTO.getEmail()).orElse(null);
         if (user != null) throw new UserAlreadyExistsException(professorDTO.getEmail());
 
         Professor professor = this.buildProfessor(professorDTO);

@@ -10,7 +10,7 @@ import java.util.Collection;
 import java.util.HashSet;
 
 @Entity
-public class Professor extends User {
+public class Professor extends TCCMatchUser {
 
     @JsonIgnore
     @ElementCollection
