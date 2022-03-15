@@ -33,4 +33,14 @@ public class ProfessorApiController {
         TCC tcc = professorService.createTCC(tccDTO);
         return new ResponseEntity<>(tcc, HttpStatus.CREATED);
     }
+
+    @PostMapping("/tcc/{tccId}/interest/{interestId}")
+    public ResponseEntity<Void> approveOrientation(@PathVariable Long interestId, @PathVariable Long tccId) {
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @DeleteMapping("/tcc/{tccId}/interest/{interestId}")
+    public ResponseEntity<Void> refuseOrientation(@PathVariable Long interestId, @PathVariable Long tccId) {
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 }

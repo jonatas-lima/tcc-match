@@ -5,6 +5,7 @@ import com.psoft.match.tcc.dto.TCCDTO;
 import com.psoft.match.tcc.model.StudyArea;
 import com.psoft.match.tcc.model.tcc.TCC;
 import com.psoft.match.tcc.model.tcc.TCCProposal;
+import com.psoft.match.tcc.model.tcc.orientation.OrientationInterest;
 import com.psoft.match.tcc.model.tcc.orientation.OrientationProposal;
 import com.psoft.match.tcc.model.user.Professor;
 import com.psoft.match.tcc.model.user.Student;
@@ -13,6 +14,7 @@ import com.psoft.match.tcc.repository.user.ProfessorRepository;
 import com.psoft.match.tcc.service.study_area.StudyAreaService;
 import com.psoft.match.tcc.service.tcc.TCCProposalService;
 import com.psoft.match.tcc.service.tcc.TCCService;
+import com.psoft.match.tcc.service.tcc.orientation.OrientationInterestService;
 import com.psoft.match.tcc.service.tcc.orientation.OrientationProposalService;
 import com.psoft.match.tcc.util.exception.professor.ProfessorNotFoundException;
 import com.psoft.match.tcc.util.exception.user.UserAlreadyExistsException;
@@ -42,6 +44,9 @@ public class ProfessorServiceImpl implements ProfessorService {
 
     @Autowired
     private OrientationProposalService orientationProposalService;
+
+    @Autowired
+    private OrientationInterestService orientationInterestService;
 
     @Autowired
     private TCCService tccService;
@@ -108,6 +113,27 @@ public class ProfessorServiceImpl implements ProfessorService {
 
     @Transactional
     @Override
+    public void approveOrientationInterest(Long tccId, Long interestId) {
+        Professor professor = tccMatchUserService.getLoggedUser();
+        TCC tcc = tccService.findTCCById(tccId);
+        OrientationInterest orientationInterest = orientationInterestService.findById(interestId);
+
+        if (!professor.getRegisteredTCCs().contains(tcc)) throw new RuntimeException("tcc does not belong to professor");
+        if (!professor.getInterestedTCCs().contains(orientationInterest)) throw new RuntimeException("orientation interest is not for this tcc");
+
+        tcc.approveTCC();
+        orientationInterestService.deleteOrientationInterest(orientationInterest);
+        tccService.saveTCC(tcc);
+    }
+
+    @Transactional
+    @Override
+    public void refuseOrientationInterest(Long tccId, Long interestId) {
+
+    }
+
+    @Transactional
+    @Override
     public void deleteProfessor(Long id) {
         Professor professor = this.findProfessorById(id);
         tccMatchUserService.deleteUser(professor);
@@ -134,7 +160,7 @@ public class ProfessorServiceImpl implements ProfessorService {
         Collection<StudyArea> studyAreas = studyAreaService.findStudyAreasById(tccdto.getStudyAreasIds());
 
         TCC tcc = new TCC(tccdto.getTitle(), tccdto.getDescription(), professor, studyAreas);
-        professor.addOrientedTCC(tcc);
+        professor.addTCC(tcc);
         professor.decrementQuota();
 
         tcc = tccService.saveTCC(tcc);

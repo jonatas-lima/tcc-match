@@ -9,5 +9,7 @@ public interface OrientationInterestService {
 
     void saveOrientationInterest(OrientationInterest orientationInterest);
 
-    List<OrientationInterest> findOrientationInterestsByTCC(TCC tcc);
+    void deleteOrientationInterest(OrientationInterest orientationInterest);
+
+    OrientationInterest findById(Long id);
 }

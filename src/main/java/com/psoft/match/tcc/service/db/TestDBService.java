@@ -105,9 +105,9 @@ public class TestDBService implements DBService {
 
         tccRepository.saveAll(tccs);
 
-        professor1.addOrientedTCC(tcc1);
-        professor2.addOrientedTCC(tcc2);
-        professor3.addOrientedTCC(tcc3);
+        professor1.addTCC(tcc1);
+        professor2.addTCC(tcc2);
+        professor3.addTCC(tcc3);
 
         student1.setTcc(tcc1);
         tcc1.setStudent(student1);

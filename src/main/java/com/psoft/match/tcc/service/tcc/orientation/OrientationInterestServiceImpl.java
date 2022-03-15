@@ -22,8 +22,15 @@ public class OrientationInterestServiceImpl implements OrientationInterestServic
         orientationInterestRepository.save(orientationInterest);
     }
 
+    @Transactional
     @Override
-    public List<OrientationInterest> findOrientationInterestsByTCC(TCC tcc) {
-        return orientationInterestRepository.findByInterestedTCC(tcc);
+    public void deleteOrientationInterest(OrientationInterest orientationInterest) {
+        orientationInterestRepository.delete(orientationInterest);
     }
+
+    @Override
+    public OrientationInterest findById(Long id) {
+        return orientationInterestRepository.findById(id).orElseThrow(() -> new RuntimeException("interest not found!"));
+    }
+
 }

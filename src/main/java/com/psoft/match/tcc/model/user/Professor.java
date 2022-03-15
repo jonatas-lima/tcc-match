@@ -29,7 +29,7 @@ public class Professor extends TCCMatchUser {
 
     @JsonIgnore
     @OneToMany
-    private Collection<TCC> orientedTCCs;
+    private Collection<TCC> registeredTCCs;
 
     public Professor() {}
 
@@ -38,7 +38,7 @@ public class Professor extends TCCMatchUser {
         this.interestedStudyAreas = new HashSet<>();
         this.interestedTCCs = new HashSet<>();
         this.labs = labs;
-        this.orientedTCCs = new HashSet<>();
+        this.registeredTCCs = new HashSet<>();
         this.quota = quota;
     }
 
@@ -78,16 +78,16 @@ public class Professor extends TCCMatchUser {
         return this.interestedTCCs.remove(orientationInterest);
     }
 
-    public Collection<TCC> getOrientedTCCs() {
-        return new HashSet<>(orientedTCCs);
+    public Collection<TCC> getRegisteredTCCs() {
+        return new HashSet<>(registeredTCCs);
     }
 
-    public boolean addOrientedTCC(TCC tcc) {
-        return this.orientedTCCs.add(tcc);
+    public boolean addTCC(TCC tcc) {
+        return this.registeredTCCs.add(tcc);
     }
 
-    public boolean removeOrientedTCC(TCC tcc) {
-        return this.orientedTCCs.remove(tcc);
+    public boolean removeTCC(TCC tcc) {
+        return this.registeredTCCs.remove(tcc);
     }
 
     public Integer getQuota() {

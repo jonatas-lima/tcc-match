@@ -22,6 +22,10 @@ public interface ProfessorService  {
 
     Professor updateProfessor(Long id, ProfessorDTO professorDTO);
 
+    void approveOrientationInterest(Long tccId, Long interestId);
+
+    void refuseOrientationInterest(Long tccId, Long interestId);
+
     void deleteProfessor(Long id);
 
     void declareOrientationInterest(Long tccProposalId);

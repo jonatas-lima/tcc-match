@@ -2,15 +2,14 @@ package com.psoft.match.tcc.model.tcc;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.psoft.match.tcc.model.StudyArea;
+import com.psoft.match.tcc.model.tcc.orientation.OrientationProposal;
 import com.psoft.match.tcc.model.user.Student;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 
 @Entity
-@Inheritance(strategy = InheritanceType.JOINED)
 public class TCCProposal {
 
     @Id
@@ -21,8 +20,6 @@ public class TCCProposal {
 
     private String description;
 
-    private TCCStatus tccStatus;
-
     @JsonIgnore
     @ManyToOne
     private Student student;
@@ -30,6 +27,9 @@ public class TCCProposal {
     @JsonIgnore
     @ManyToMany
     private Collection<StudyArea> studyAreas;
+
+    @OneToMany
+    private Collection<OrientationProposal> orientationProposals;
 
     public TCCProposal() {}
 
@@ -44,9 +44,9 @@ public class TCCProposal {
     public TCCProposal(Student student, String title, String description, Collection<StudyArea> studyAreas) {
         this.title = title;
         this.description = description;
-        this.tccStatus = TCCStatus.PENDING;
         this.studyAreas = studyAreas;
         this.student = student;
+        this.orientationProposals = new HashSet<>();
     }
 
     public Long getId() {
@@ -67,14 +67,6 @@ public class TCCProposal {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public TCCStatus getTccStatus() {
-        return this.tccStatus;
-    }
-
-    public void setTccStatus(TCCStatus tccStatus) {
-        this.tccStatus = tccStatus;
     }
 
     public Collection<StudyArea> getStudyAreas() {
