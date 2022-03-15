@@ -2,8 +2,8 @@ package com.psoft.match.tcc.service.auth;
 
 import com.psoft.match.tcc.dto.CredentialsDTO;
 import com.psoft.match.tcc.model.user.TCCMatchUser;
-import com.psoft.match.tcc.repository.user.UserRepository;
 import com.psoft.match.tcc.security.JWTUtil;
+import com.psoft.match.tcc.service.user.TCCMatchUserService;
 import com.psoft.match.tcc.util.exception.auth.InvalidCredentialsException;
 import com.psoft.match.tcc.util.exception.auth.NoOneLoggedException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +26,7 @@ public class AuthServiceImpl implements AuthService {
     private AuthenticationManager authenticationManager;
 
     @Autowired
-    private UserRepository userRepository;
+    private TCCMatchUserService tccMatchUserService;
 
     @Override
     public String login(CredentialsDTO credentialsDTO) {
@@ -41,14 +41,10 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public <T extends TCCMatchUser> T getLoggedUser() {
+    public TCCMatchUser getLoggedUser() {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String username = principal instanceof UserDetails ? ((UserDetails) principal).getUsername() : principal.toString();
-        try {
-            return (T) userRepository.findByUsername(username).orElseThrow(NoOneLoggedException::new);
-        } catch (ClassCastException e) {
-            throw new RuntimeException();
-        }
+        return tccMatchUserService.findByUsernameOpt(username).orElseThrow(NoOneLoggedException::new);
     }
 
 }

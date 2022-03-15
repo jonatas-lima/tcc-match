@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface UserRepository extends JpaRepository<TCCMatchUser, Long> {
+public interface TCCMatchUserRepository extends JpaRepository<TCCMatchUser, Long> {
 
     Optional<TCCMatchUser> findUserByEmail(String email);
 

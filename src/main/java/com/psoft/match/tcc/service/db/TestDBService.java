@@ -10,7 +10,7 @@ import com.psoft.match.tcc.repository.StudyAreaRepository;
 import com.psoft.match.tcc.repository.tcc.TCCRepository;
 import com.psoft.match.tcc.repository.user.ProfessorRepository;
 import com.psoft.match.tcc.repository.user.StudentRepository;
-import com.psoft.match.tcc.repository.user.UserRepository;
+import com.psoft.match.tcc.repository.user.TCCMatchUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -29,7 +29,7 @@ public class TestDBService implements DBService {
     private ProfessorRepository professorRepository;
 
     @Autowired
-    private UserRepository userRepository;
+    private TCCMatchUserRepository TCCMatchUserRepository;
 
     @Autowired
     private StudyAreaRepository studyAreaRepository;
@@ -56,7 +56,7 @@ public class TestDBService implements DBService {
         List<Student> students = Arrays.asList(student1, student2);
         List<Professor> professors = Arrays.asList(professor1, professor2, professor3);
 
-        userRepository.saveAll(users);
+        TCCMatchUserRepository.saveAll(users);
         studentRepository.saveAll(students);
         professorRepository.saveAll(professors);
 

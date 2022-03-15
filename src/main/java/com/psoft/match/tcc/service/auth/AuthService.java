@@ -7,5 +7,5 @@ public interface AuthService {
 
     String login(CredentialsDTO credentialsDTO);
 
-    <T extends TCCMatchUser> T getLoggedUser();
+    TCCMatchUser getLoggedUser();
 }

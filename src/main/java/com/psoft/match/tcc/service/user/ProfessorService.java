@@ -8,7 +8,7 @@ import com.psoft.match.tcc.model.user.Student;
 
 import java.util.List;
 
-public interface ProfessorService {
+public interface ProfessorService  {
 
     List<Professor> getAllProfessors();
 

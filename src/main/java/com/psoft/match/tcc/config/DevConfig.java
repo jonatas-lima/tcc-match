@@ -27,6 +27,7 @@ public class DevConfig implements SystemConfig {
     }
 
     @Bean
+    @Override
     public MailSender mailSender() {
         return new JavaMailSenderImpl();
     }

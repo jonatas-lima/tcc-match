@@ -2,7 +2,9 @@ package com.psoft.match.tcc.service.study_area;
 
 import com.psoft.match.tcc.dto.StudyAreaDTO;
 import com.psoft.match.tcc.model.StudyArea;
+import com.psoft.match.tcc.model.tcc.TCC;
 import com.psoft.match.tcc.repository.StudyAreaRepository;
+import com.psoft.match.tcc.service.email.EmailService;
 import com.psoft.match.tcc.util.exception.studyarea.StudyAreaAlreadyExistsException;
 import com.psoft.match.tcc.util.exception.studyarea.StudyAreaNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +19,9 @@ public class StudyAreaServiceImpl implements StudyAreaService {
 
     @Autowired
     private StudyAreaRepository studyAreaRepository;
+
+    @Autowired
+    private EmailService emailService;
 
     @Transactional
     @Override
@@ -48,6 +53,16 @@ public class StudyAreaServiceImpl implements StudyAreaService {
     @Override
     public List<StudyArea> findStudyAreasById(Collection<Long> studyAreasIds) {
         return studyAreaRepository.findAllById(studyAreasIds);
+    }
+
+    @Override
+    public void notifyNewTCCToInterestedStudents(StudyArea studyArea, TCC tcc) {
+        studyArea.getInterestedStudents().forEach(student -> emailService.notifyNewTCCStudyArea(student, studyArea, tcc));
+    }
+
+    @Override
+    public void notifyNewTCCToInterestedStudents(Collection<StudyArea> studyAreas, TCC tcc) {
+        studyAreas.forEach(studyArea -> this.notifyNewTCCToInterestedStudents(studyArea, tcc));
     }
 
     @Transactional
