@@ -1,6 +1,8 @@
 package com.psoft.match.tcc.util.exception.auth;
 
-public class InvalidCredentialsException extends RuntimeException {
+import com.psoft.match.tcc.util.exception.common.UnauthorizedException;
+
+public class InvalidCredentialsException extends UnauthorizedException {
 
     public InvalidCredentialsException() {
         super("Wrong username or password");

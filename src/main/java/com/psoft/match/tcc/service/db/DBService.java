@@ -1,4 +1,4 @@
-package com.psoft.match.tcc.service;
+package com.psoft.match.tcc.service.db;
 
 public interface DBService {
 

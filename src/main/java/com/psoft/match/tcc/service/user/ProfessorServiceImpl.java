@@ -1,13 +1,21 @@
-package com.psoft.match.tcc.service.impl;
+package com.psoft.match.tcc.service.user;
 
 import com.psoft.match.tcc.dto.ProfessorDTO;
+import com.psoft.match.tcc.dto.TCCDTO;
 import com.psoft.match.tcc.model.StudyArea;
+import com.psoft.match.tcc.model.tcc.orientation.OrientationProposal;
+import com.psoft.match.tcc.model.tcc.TCC;
+import com.psoft.match.tcc.model.tcc.TCCProposal;
 import com.psoft.match.tcc.model.user.Professor;
 import com.psoft.match.tcc.model.user.Student;
 import com.psoft.match.tcc.model.user.User;
 import com.psoft.match.tcc.repository.user.ProfessorRepository;
 import com.psoft.match.tcc.repository.user.UserRepository;
-import com.psoft.match.tcc.service.ProfessorService;
+import com.psoft.match.tcc.service.auth.AuthService;
+import com.psoft.match.tcc.service.tcc.TCCProposalService;
+import com.psoft.match.tcc.service.tcc.TCCService;
+import com.psoft.match.tcc.service.tcc.orientation.OrientationProposalService;
+import com.psoft.match.tcc.service.study_area.StudyAreaService;
 import com.psoft.match.tcc.util.exception.professor.ProfessorNotFoundException;
 import com.psoft.match.tcc.util.exception.user.UserAlreadyExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +23,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,6 +38,21 @@ public class ProfessorServiceImpl implements ProfessorService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private TCCProposalService tccProposalService;
+
+    @Autowired
+    private AuthService authService;
+
+    @Autowired
+    private OrientationProposalService orientationProposalService;
+
+    @Autowired
+    private TCCService tccService;
+
+    @Autowired
+    private StudyAreaService studyAreaService;
 
     @Override
     public List<Professor> getAllProfessors() {
@@ -53,8 +77,8 @@ public class ProfessorServiceImpl implements ProfessorService {
     }
 
     private boolean hasSharedInterest(Professor professor, Student student) {
-        for(StudyArea s : student.getStudyAreas()) {
-            if (professor.getStudyAreas().contains(s)) {
+        for(StudyArea s : student.getInterestedStudyAreas()) {
+            if (professor.getInterestedStudyAreas().contains(s)) {
                 return true;
             }
         }
@@ -95,9 +119,41 @@ public class ProfessorServiceImpl implements ProfessorService {
         professorRepository.delete(professor);
     }
 
+    @Transactional
+    @Override
+    public void declareOrientationInterest(Long tccProposalId) {
+        Professor professor = authService.getLoggedUser();
+        TCCProposal tccProposal = tccProposalService.findTCCProposalById(tccProposalId);
+
+        OrientationProposal orientationProposal = new OrientationProposal(professor, tccProposal);
+        professor.addOrientationInterest(orientationProposal);
+
+        tccProposal.getStudent().notify();
+        orientationProposalService.saveTccProposal(orientationProposal);
+        professorRepository.save(professor);
+    }
+
+    @Transactional
+    @Override
+    public TCC createTCC(TCCDTO tccdto) {
+        Professor professor = authService.getLoggedUser();
+        Collection<StudyArea> studyAreas = studyAreaService.findStudyAreasById(tccdto.getStudyAreasIds());
+
+        TCC tcc = new TCC(tccdto.getTitle(), tccdto.getDescription(), professor, studyAreas);
+        professor.addOrientedTCC(tcc);
+        professor.decrementQuota();
+
+        tcc = tccService.saveTCC(tcc);
+        professorRepository.save(professor);
+
+        studyAreas.forEach(StudyArea::notifyStudent);
+
+        return tcc;
+    }
+
     private Professor buildProfessor(ProfessorDTO professorDTO) {
         String encryptedPassword = passwordEncoder.encode(professorDTO.getPassword());
-        return new Professor(professorDTO.getFullName(), professorDTO.getEmail(), professorDTO.getUsername(), encryptedPassword, professorDTO.getQuota());
+        return new Professor(professorDTO.getFullName(), professorDTO.getEmail(), professorDTO.getUsername(), encryptedPassword, professorDTO.getLabs(), professorDTO.getQuota());
     }
 
     private void updateProfessor(Professor oldProfessor, ProfessorDTO newProfessor) {

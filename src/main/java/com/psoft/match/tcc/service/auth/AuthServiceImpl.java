@@ -1,10 +1,10 @@
-package com.psoft.match.tcc.service.impl;
+package com.psoft.match.tcc.service.auth;
 
 import com.psoft.match.tcc.dto.CredentialsDTO;
 import com.psoft.match.tcc.model.user.User;
 import com.psoft.match.tcc.repository.user.UserRepository;
 import com.psoft.match.tcc.security.JWTUtil;
-import com.psoft.match.tcc.service.AuthService;
+import com.psoft.match.tcc.service.auth.AuthService;
 import com.psoft.match.tcc.util.exception.auth.InvalidCredentialsException;
 import com.psoft.match.tcc.util.exception.auth.NoOneLoggedException;
 import org.springframework.beans.factory.annotation.Autowired;

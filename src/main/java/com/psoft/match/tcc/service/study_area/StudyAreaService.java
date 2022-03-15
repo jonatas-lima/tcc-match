@@ -1,4 +1,4 @@
-package com.psoft.match.tcc.service;
+package com.psoft.match.tcc.service.study_area;
 
 import com.psoft.match.tcc.dto.StudyAreaDTO;
 import com.psoft.match.tcc.model.StudyArea;

@@ -1,9 +1,8 @@
-package com.psoft.match.tcc.service.impl;
+package com.psoft.match.tcc.service.study_area;
 
 import com.psoft.match.tcc.dto.StudyAreaDTO;
 import com.psoft.match.tcc.model.StudyArea;
 import com.psoft.match.tcc.repository.StudyAreaRepository;
-import com.psoft.match.tcc.service.StudyAreaService;
 import com.psoft.match.tcc.util.exception.studyarea.StudyAreaAlreadyExistsException;
 import com.psoft.match.tcc.util.exception.studyarea.StudyAreaNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;

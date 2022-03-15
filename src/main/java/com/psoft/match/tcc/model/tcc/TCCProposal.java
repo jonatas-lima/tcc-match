@@ -1,6 +1,8 @@
 package com.psoft.match.tcc.model.tcc;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.psoft.match.tcc.model.StudyArea;
+import com.psoft.match.tcc.model.user.Student;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -21,16 +23,30 @@ public class TCCProposal {
 
     private TCCStatus tccStatus;
 
+    @JsonIgnore
+    @ManyToOne
+    private Student student;
+
+    @JsonIgnore
     @ManyToMany
     private Collection<StudyArea> studyAreas;
 
     public TCCProposal() {}
 
     public TCCProposal(String title, String description) {
+        this(null, title, description, new HashSet<>());
+    }
+
+    public TCCProposal(String title, String description, Collection<StudyArea> studyAreas) {
+        this(null, title, description, studyAreas);
+    }
+
+    public TCCProposal(Student student, String title, String description, Collection<StudyArea> studyAreas) {
         this.title = title;
         this.description = description;
         this.tccStatus = TCCStatus.PENDING;
-        this.studyAreas = new HashSet<>();
+        this.studyAreas = studyAreas;
+        this.student = student;
     }
 
     public Long getId() {
@@ -67,5 +83,13 @@ public class TCCProposal {
 
     public boolean addStudyArea(StudyArea studyArea) {
         return this.studyAreas.add(studyArea);
+    }
+
+    public Student getStudent() {
+        return student;
+    }
+
+    public void setStudent(Student student) {
+        this.student = student;
     }
 }

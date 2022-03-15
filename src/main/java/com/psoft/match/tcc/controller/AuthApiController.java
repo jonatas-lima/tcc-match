@@ -2,7 +2,7 @@ package com.psoft.match.tcc.controller;
 
 import com.psoft.match.tcc.dto.CredentialsDTO;
 import com.psoft.match.tcc.model.user.User;
-import com.psoft.match.tcc.service.AuthService;
+import com.psoft.match.tcc.service.auth.AuthService;
 import com.psoft.match.tcc.util.Constants;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,23 +1,21 @@
-package com.psoft.match.tcc.service.impl;
+package com.psoft.match.tcc.service.db;
 
 import com.psoft.match.tcc.model.StudyArea;
 import com.psoft.match.tcc.model.tcc.TCC;
-import com.psoft.match.tcc.model.tcc.TCCProposal;
 import com.psoft.match.tcc.model.user.Admin;
 import com.psoft.match.tcc.model.user.Professor;
 import com.psoft.match.tcc.model.user.Student;
 import com.psoft.match.tcc.model.user.User;
 import com.psoft.match.tcc.repository.StudyAreaRepository;
-import com.psoft.match.tcc.repository.tcc.TCCProposalRepository;
 import com.psoft.match.tcc.repository.tcc.TCCRepository;
 import com.psoft.match.tcc.repository.user.ProfessorRepository;
 import com.psoft.match.tcc.repository.user.StudentRepository;
 import com.psoft.match.tcc.repository.user.UserRepository;
-import com.psoft.match.tcc.service.DBService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -37,9 +35,6 @@ public class TestDBService implements DBService {
     private StudyAreaRepository studyAreaRepository;
 
     @Autowired
-    private TCCProposalRepository tccProposalRepository;
-
-    @Autowired
     private TCCRepository tccRepository;
 
     @Autowired
@@ -49,9 +44,9 @@ public class TestDBService implements DBService {
     public void seed() {
         Admin admin = new Admin("admin", "admin@admim.com", "admin", passwordEncoder.encode("admin"));
 
-        Professor professor1 = new Professor("Elmar Melcher", "elmar@gmail.com", "elmar", passwordEncoder.encode("1234"), 10);
-        Professor professor2 = new Professor("Francisco Vilar", "fubica@gmail.com", "fubica", passwordEncoder.encode("1234"), 2);
-        Professor professor3 = new Professor("Joao Arthur", "joao.arthur@gmail.com", "joao_arthur", passwordEncoder.encode("1234"), 0);
+        Professor professor1 = new Professor("Elmar Melcher", "elmar@gmail.com", "elmar", passwordEncoder.encode("1234"), Arrays.asList("LSD", "SPLAB"), 10);
+        Professor professor2 = new Professor("Francisco Vilar", "fubica@gmail.com", "fubica", passwordEncoder.encode("1234"), Arrays.asList("LSD"), 2);
+        Professor professor3 = new Professor("Joao Arthur", "joao.arthur@gmail.com", "joao_arthur", passwordEncoder.encode("1234"), new ArrayList<>(), 0);
 
         Student student1 = new Student("Jonatas Ferreira de Lima", "119210036", "ferreiradelimajonatas@gmail.com", "2024.2", "jonatas", passwordEncoder.encode("1234"));
         Student student2 = new Student("Bernard Dantas Odon", "123", "bernard.odon@ccc.ufcg.edu.br", "2024.2", "bodon", passwordEncoder.encode("1234"));
@@ -99,25 +94,26 @@ public class TestDBService implements DBService {
         studentRepository.saveAll(students);
         studyAreaRepository.saveAll(studyAreas);
 
-        TCCProposal tccProposal1 = new TCCProposal("Proposta 1", "descricao da proposta 1");
-        TCCProposal tccProposal2 = new TCCProposal("Proposta 2", "descricao da proposta 2");
-        TCCProposal tccProposal3 = new TCCProposal("Proposta 3", "descricao da proposta 3");
+        TCC tcc1 = new TCC("Proposta 1", "descricao da proposta 1", professor1);
+        TCC tcc2 = new TCC("Proposta 2", "descricao da proposta 2", professor2);
+        TCC tcc3 = new TCC("Proposta 3", "descricao da proposta 3", professor3);
 
-        List<TCCProposal> tccProposals = Arrays.asList(tccProposal1, tccProposal2, tccProposal3);
-        tccProposalRepository.saveAll(tccProposals);
+        List<TCC> tccs = Arrays.asList(tcc1, tcc2, tcc3);
+        tcc1.addStudyArea(studyArea1);
+        tcc1.addStudyArea(studyArea2);
+        tcc2.addStudyArea(studyArea1);
 
-        tccProposal1.addStudyArea(studyArea1);
-        tccProposal1.addStudyArea(studyArea2);
+        tccRepository.saveAll(tccs);
 
-        tccProposal2.addStudyArea(studyArea1);
+        professor1.addOrientedTCC(tcc1);
+        professor2.addOrientedTCC(tcc2);
+        professor3.addOrientedTCC(tcc3);
 
-        tccProposalRepository.saveAll(tccProposals);
+        student1.setTcc(tcc1);
+        tcc1.setStudent(student1);
 
-        TCC tcc1 = new TCC(tccProposal1, professor1);
-        TCC tcc2 = new TCC(tccProposal2, professor2);
-
-        List<TCC> tccs = Arrays.asList(tcc1, tcc2);
-
+        professorRepository.save(professor1);
+        studentRepository.save(student1);
         tccRepository.saveAll(tccs);
     }
 }

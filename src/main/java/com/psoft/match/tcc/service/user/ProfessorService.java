@@ -1,6 +1,8 @@
-package com.psoft.match.tcc.service;
+package com.psoft.match.tcc.service.user;
 
 import com.psoft.match.tcc.dto.ProfessorDTO;
+import com.psoft.match.tcc.dto.TCCDTO;
+import com.psoft.match.tcc.model.tcc.TCC;
 import com.psoft.match.tcc.model.user.Professor;
 import com.psoft.match.tcc.model.user.Student;
 
@@ -21,4 +23,8 @@ public interface ProfessorService {
     Professor updateProfessor(Long id, ProfessorDTO professorDTO);
 
     void deleteProfessor(Long id);
+
+    void declareOrientationInterest(Long tccProposalId);
+
+    TCC createTCC(TCCDTO tccdto);
 }

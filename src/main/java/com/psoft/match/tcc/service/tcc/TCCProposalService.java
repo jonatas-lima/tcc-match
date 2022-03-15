@@ -1,9 +1,10 @@
-package com.psoft.match.tcc.service;
+package com.psoft.match.tcc.service.tcc;
 
 import java.util.List;
 
 import com.psoft.match.tcc.dto.TCCProposalDTO;
 import com.psoft.match.tcc.model.tcc.TCCProposal;
+import com.psoft.match.tcc.model.user.Student;
 
 public interface TCCProposalService {
 
@@ -11,6 +12,6 @@ public interface TCCProposalService {
 	
 	TCCProposal findTCCProposalById(Long id);
 	
-	TCCProposal createTCCProposal(TCCProposalDTO tccProposal);
+	TCCProposal createTCCProposal(TCCProposalDTO tccProposal, Student student);
 	
 }

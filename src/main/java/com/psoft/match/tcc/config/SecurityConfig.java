@@ -2,7 +2,7 @@ package com.psoft.match.tcc.config;
 
 import com.psoft.match.tcc.security.JWTAuthorizationFilter;
 import com.psoft.match.tcc.security.JWTUtil;
-import com.psoft.match.tcc.service.impl.UserDetailsServiceImpl;
+import com.psoft.match.tcc.service.auth.UserDetailsServiceImpl;
 import com.psoft.match.tcc.util.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
