@@ -10,8 +10,6 @@ import java.util.List;
 
 public interface ProfessorService  {
 
-    List<Professor> getAllProfessors();
-
     List<Professor> getAvailableProfessors();
 
     List<Professor> getAvailableProfessorsWithSharedInterests(Student student);
@@ -22,9 +20,9 @@ public interface ProfessorService  {
 
     Professor updateProfessor(Long id, ProfessorDTO professorDTO);
 
-    void approveOrientationInterest(Long tccId, Long interestId);
+    void approveOrientationInterest(Long tccId, Long studentId);
 
-    void refuseOrientationInterest(Long tccId, Long interestId);
+    void refuseOrientationInterest(Long tccId, Long studentId);
 
     void deleteProfessor(Long id);
 

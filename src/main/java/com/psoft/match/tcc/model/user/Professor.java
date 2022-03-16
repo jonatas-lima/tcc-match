@@ -2,12 +2,12 @@ package com.psoft.match.tcc.model.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.psoft.match.tcc.model.StudyArea;
-import com.psoft.match.tcc.model.tcc.orientation.OrientationProposal;
 import com.psoft.match.tcc.model.tcc.TCC;
 
 import javax.persistence.*;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 public class Professor extends TCCMatchUser {
@@ -25,11 +25,11 @@ public class Professor extends TCCMatchUser {
 
     @JsonIgnore
     @OneToMany
-    private Collection<OrientationProposal> interestedTCCs;
+    private Set<TCC> interestedTCCs;
 
     @JsonIgnore
     @OneToMany
-    private Collection<TCC> registeredTCCs;
+    private Set<TCC> registeredTCCs;
 
     public Professor() {}
 
@@ -66,15 +66,15 @@ public class Professor extends TCCMatchUser {
         this.labs.remove(lab);
     }
 
-    public Collection<OrientationProposal> getInterestedTCCs() {
+    public Collection<TCC> getInterestedTCCs() {
         return interestedTCCs;
     }
 
-    public boolean addOrientationInterest(OrientationProposal orientationInterest) {
+    public boolean addOrientationInterest(TCC orientationInterest) {
         return this.interestedTCCs.add(orientationInterest);
     }
 
-    public boolean removeOrientationInterest(OrientationProposal orientationInterest) {
+    public boolean removeOrientationInterest(TCC orientationInterest) {
         return this.interestedTCCs.remove(orientationInterest);
     }
 
@@ -82,7 +82,7 @@ public class Professor extends TCCMatchUser {
         return new HashSet<>(registeredTCCs);
     }
 
-    public boolean addTCC(TCC tcc) {
+    public boolean registerTCC(TCC tcc) {
         return this.registeredTCCs.add(tcc);
     }
 

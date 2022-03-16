@@ -1,98 +1,177 @@
 package com.psoft.match.tcc.model.tcc;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.psoft.match.tcc.model.StudyArea;
-import com.psoft.match.tcc.model.tcc.orientation.OrientationInterest;
 import com.psoft.match.tcc.model.user.Professor;
 import com.psoft.match.tcc.model.user.Student;
+import com.sun.istack.NotNull;
 
 import javax.persistence.*;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Objects;
 
 @Entity
 public class TCC {
 
     @Id
+    @Column(unique = true)
+    @NotNull
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    private Professor professor;
+    private String title;
 
-    @OneToOne
-    private TCCProposal tccProposal;
+    private String description;
+
+    @ManyToOne
+    private Student advisedStudent;
+
+    @ManyToOne
+    private Professor advisor;
+
+    @JsonIgnore
+    @ManyToMany
+    @JoinTable(
+            joinColumns = @JoinColumn(name = "tcc_id"),
+            inverseJoinColumns = @JoinColumn(name = "study_area_id")
+    )
+    private Collection<StudyArea> studyAreas;
+
+    @JsonIgnore
+    @ManyToMany
+    @JoinTable(
+            joinColumns = @JoinColumn(name = "tcc_id"),
+            inverseJoinColumns = @JoinColumn(name = "student_id")
+    )
+    private Collection<Student> interestedStudents;
+
+    @JsonIgnore
+    @ManyToMany
+    @JoinTable(
+            joinColumns = @JoinColumn(name = "tcc_id"),
+            inverseJoinColumns = @JoinColumn(name = "professor_id")
+    )
+    private Collection<Professor> interestedProfessors;
 
     private TCCStatus tccStatus;
 
-    @OneToMany
-    Collection<OrientationInterest> orientationInterests;
-
-    public TCC(TCCProposal tccProposal, Professor professor) {
-        this.tccProposal = tccProposal;
-        this.professor = professor;
-        this.tccStatus = TCCStatus.PENDING;
+    public TCC() {
     }
 
-    public TCC() {
+    public TCC(Professor advisor, String title, String description, Student advisedStudent, Collection<StudyArea> studyAreas, Collection<Student> interestedStudents, TCCStatus tccStatus, Collection<Professor> interestedProfessors) {
+        this.advisor = advisor;
+        this.title = title;
+        this.description = description;
+        this.advisedStudent = advisedStudent;
+        this.studyAreas = studyAreas;
+        this.interestedStudents = interestedStudents;
+        this.tccStatus = tccStatus;
+        this.interestedProfessors = interestedProfessors;
+    }
+
+    public TCC(Professor advisor, String title, String description) {
+        this(advisor, title, description, null, new HashSet<>(), new HashSet<>(), TCCStatus.PENDING, new HashSet<>());
+    }
+
+    public TCC(Student advisedStudent, String title, String description) {
+        this(null, title, description, advisedStudent, new HashSet<>(), new HashSet<>(), TCCStatus.PENDING, new HashSet<>());
     }
 
     public Long getId() {
         return id;
     }
 
-    public Professor getProfessor() {
-        return professor;
+    public Professor getAdvisor() {
+        return advisor;
     }
 
-    public void setProfessor(Professor professor) {
-        this.professor = professor;
+    public void setAdvisor(Professor advisor) {
+        this.advisor = advisor;
     }
 
     public boolean isAvailable() {
-        return this.professor == null || this.getStudent() == null;
+        return this.advisor == null || this.advisedStudent == null;
     }
 
     public String toEmailFormat() {
         StringBuilder sb = new StringBuilder();
         sb
                 .append("[INFORMAÇÕES]\n")
-                .append("Título: ").append(getTitle()).append("\n")
-                .append("Professor: ").append(getProfessor().getFullName()).append("\n");
+                .append("Título do TCC: ").append(getTitle()).append("\n")
+                .append("Professor: ").append(advisor.getFullName()).append("\n");
 
         getStudyAreas().forEach(studyArea -> sb.append("- ").append(studyArea.getDescription()).append("\n"));
 
         return sb.toString();
     }
 
-    public Student getStudent() {
-        return tccProposal.getStudent();
+    public String getTitle() {
+        return title;
     }
 
-    public String getTitle() {
-        return tccProposal.getTitle();
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Student getAdvisedStudent() {
+        return advisedStudent;
+    }
+
+    public void setAdvisedStudent(Student student) {
+        this.advisedStudent = student;
     }
 
     public Collection<StudyArea> getStudyAreas() {
-        return tccProposal.getStudyAreas();
+        return studyAreas;
     }
 
-    public Collection<OrientationInterest> getOrientationInterests() {
-        return orientationInterests;
+    public void setStudyAreas(Collection<StudyArea> studyAreas) {
+        this.studyAreas = studyAreas;
     }
 
-    public boolean addOrientationInterest(OrientationInterest orientationInterest) {
-        return this.orientationInterests.add(orientationInterest);
+    public Collection<Student> getInterestedStudents() {
+        return interestedStudents;
     }
 
-    public boolean removeOrientationInterest(OrientationInterest orientationInterest) {
-        return this.orientationInterests.remove(orientationInterest);
+    public void setTccStatus(TCCStatus tccStatus) {
+        this.tccStatus = tccStatus;
     }
 
-    public TCCProposal getTccProposal() {
-        return tccProposal;
+    public Collection<Professor> getInterestedProfessors() {
+        return interestedProfessors;
     }
 
-    public void setTccProposal(TCCProposal tccProposal) {
-        this.tccProposal = tccProposal;
+    public boolean addOrientationInterest(Professor interestedProfessor) {
+        return this.interestedProfessors.add(interestedProfessor);
+    }
+
+    public boolean addOrientationInterest(Student interestedStudent) {
+        return this.interestedStudents.add(interestedStudent);
+    }
+
+    public boolean removeOrientationInterest(Student interestedStudent) {
+        return this.interestedStudents.remove(interestedStudent);
+    }
+
+    public boolean removeOrientationInterest(Professor interestedProfessor) {
+        return this.interestedProfessors.remove(interestedProfessor);
+    }
+
+    public boolean addStudyArea(StudyArea studyArea) {
+        return this.studyAreas.add(studyArea);
+    }
+
+    public boolean removeStudyArea(StudyArea studyArea) {
+        return this.studyAreas.remove(studyArea);
     }
 
     public TCCStatus getTccStatus() {
@@ -100,6 +179,19 @@ public class TCC {
     }
 
     public void approveTCC() {
-        this.tccStatus = TCCStatus.APPROVED;
+        this.tccStatus = TCCStatus.ON_GOING;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        TCC tcc = (TCC) o;
+        return Objects.equals(id, tcc.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

@@ -2,14 +2,13 @@ package com.psoft.match.tcc.model.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.psoft.match.tcc.model.StudyArea;
-import com.psoft.match.tcc.model.tcc.orientation.OrientationInterest;
-import com.psoft.match.tcc.model.tcc.orientation.OrientationIssue;
+import com.psoft.match.tcc.model.tcc.OrientationIssue;
 import com.psoft.match.tcc.model.tcc.TCC;
-import com.psoft.match.tcc.model.tcc.TCCProposal;
 
 import javax.persistence.*;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 public class Student extends TCCMatchUser {
@@ -18,22 +17,30 @@ public class Student extends TCCMatchUser {
 
     private String expectedConclusionTerm;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "student")
-    private Collection<OrientationIssue> orientationIssues;
+    private Set<OrientationIssue> orientationIssues;
 
-    @OneToMany(mappedBy = "interestedStudent")
-    private Collection<OrientationInterest> orientationInterests;
+    @JsonIgnore
+    @ManyToMany
+    @JoinTable(
+            joinColumns = @JoinColumn(name = "interested_student_id"),
+            inverseJoinColumns = @JoinColumn(name = "tcc_id")
+    )
+    private Set<TCC> orientationInterests;
 
-    @OneToMany(mappedBy = "student")
-    private Collection<TCCProposal> tccProposals;
+    @JsonIgnore
+    @OneToMany(mappedBy = "advisedStudent")
+    private Set<TCC> tccProposals;
 
     @JsonIgnore
     @OneToOne
     private TCC tcc;
 
+    @JsonIgnore
     @ManyToMany
     @JoinTable(joinColumns = @JoinColumn(name = "student_id"), inverseJoinColumns = @JoinColumn(name = "study_area_id"))
-    private Collection<StudyArea> interestedStudyAreas;
+    private Set<StudyArea> interestedStudyAreas;
 
     public Student() {}
 
@@ -64,7 +71,7 @@ public class Student extends TCCMatchUser {
         this.expectedConclusionTerm = expectedConclusionTerm;
     }
 
-    public Collection<StudyArea> getInterestedStudyAreas() {
+    public Set<StudyArea> getInterestedStudyAreas() {
         return interestedStudyAreas;
     }
 
@@ -76,7 +83,7 @@ public class Student extends TCCMatchUser {
         return this.interestedStudyAreas.remove(studyArea);
     }
 
-    public Collection<OrientationIssue> getOrientationIssues() {
+    public Set<OrientationIssue> getOrientationIssues() {
         return orientationIssues;
     }
 
@@ -88,24 +95,20 @@ public class Student extends TCCMatchUser {
         return this.orientationIssues.remove(orientationIssue);
     }
 
-    public boolean addOrientationInterest(OrientationInterest orientationInterest) {
+    public boolean addOrientationInterest(TCC orientationInterest) {
         return this.orientationInterests.add(orientationInterest);
     }
 
-    public boolean removeOrientationInterest(OrientationInterest orientationInterest) {
+    public boolean removeOrientationInterest(TCC orientationInterest) {
         return this.orientationInterests.remove(orientationInterest);
     }
 
-    public Collection<TCCProposal> getTccProposals() {
+    public Set<TCC> getTccProposals() {
         return tccProposals;
     }
 
-    public boolean addTccProposal(TCCProposal tccProposal) {
+    public boolean addTccProposal(TCC tccProposal) {
         return this.tccProposals.add(tccProposal);
-    }
-
-    public boolean removeOrientationInterest(TCCProposal tccProposal) {
-        return this.tccProposals.remove(tccProposal);
     }
 
     public TCC getTcc() {

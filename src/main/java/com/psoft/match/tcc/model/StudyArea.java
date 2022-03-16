@@ -1,18 +1,23 @@
 package com.psoft.match.tcc.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.psoft.match.tcc.model.tcc.TCC;
 import com.psoft.match.tcc.model.user.Professor;
 import com.psoft.match.tcc.model.user.Student;
+import com.sun.istack.NotNull;
 
 import javax.persistence.*;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 public class StudyArea {
 
     @Id
+    @Column(unique = true)
+    @NotNull
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -26,12 +31,17 @@ public class StudyArea {
     @ManyToMany(mappedBy = "interestedStudyAreas")
     private Collection<Professor> interestedProfessors;
 
+    @JsonIgnore
+    @ManyToMany(mappedBy = "studyAreas")
+    private Set<TCC> tccs;
+
     public StudyArea() {}
 
     public StudyArea(String description) {
         this.description = description;
         this.interestedStudents = new HashSet<>();
         this.interestedProfessors = new HashSet<>();
+        this.tccs = new HashSet<>();
     }
 
     public Long getId() {
@@ -78,8 +88,12 @@ public class StudyArea {
         return this.interestedProfessors.remove(professor);
     }
 
-    public void notifyStudent() {
-        this.interestedStudents.forEach(student -> student.notifyNewTCC(description));
+    public boolean addTCC(TCC tcc) {
+        return this.tccs.add(tcc);
+    }
+
+    public boolean removeTCC(TCC tcc) {
+        return this.tccs.remove(tcc);
     }
 
     @Override

@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collection;
+
 @Api(tags = "Authentication api")
 @RestController
 @RequestMapping(Constants.BASE_API_ENDPOINT + "/auth")
@@ -29,5 +31,11 @@ public class AuthApiController {
     public ResponseEntity<TCCMatchUser> getLoggedUser() {
         TCCMatchUser loggedUser = authService.getLoggedUser();
         return new ResponseEntity<>(loggedUser, HttpStatus.OK);
+    }
+
+    @GetMapping("/email")
+    public ResponseEntity<Collection<String>> getEmails() {
+        Collection<String> emails = authService.getLoggedUser().getEmails();
+        return new ResponseEntity<>(emails, HttpStatus.OK);
     }
 }

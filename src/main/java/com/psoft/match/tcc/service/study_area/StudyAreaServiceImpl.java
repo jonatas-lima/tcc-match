@@ -57,7 +57,7 @@ public class StudyAreaServiceImpl implements StudyAreaService {
 
     @Override
     public void notifyNewTCCToInterestedStudents(StudyArea studyArea, TCC tcc) {
-        studyArea.getInterestedStudents().forEach(student -> emailService.notifyNewTCCStudyArea(student, studyArea, tcc));
+        studyArea.getInterestedStudents().forEach(student -> emailService.notifyNewTCCToInterestedStudents(student, studyArea, tcc));
     }
 
     @Override
