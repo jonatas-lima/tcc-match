@@ -8,9 +8,7 @@ import com.psoft.match.tcc.model.user.Student;
 
 import java.util.List;
 
-public interface ProfessorService {
-
-    List<Professor> getAllProfessors();
+public interface ProfessorService  {
 
     List<Professor> getAvailableProfessors();
 
@@ -21,6 +19,10 @@ public interface ProfessorService {
     Professor createProfessor(ProfessorDTO professorDTO);
 
     Professor updateProfessor(Long id, ProfessorDTO professorDTO);
+
+    void approveOrientationInterest(Long tccId, Long studentId);
+
+    void refuseOrientationInterest(Long tccId, Long studentId);
 
     void deleteProfessor(Long id);
 

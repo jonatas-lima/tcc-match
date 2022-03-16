@@ -6,6 +6,7 @@ import com.psoft.match.tcc.service.user.ProfessorService;
 import com.psoft.match.tcc.util.Constants;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import jdk.vm.ci.meta.Constant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,5 +33,17 @@ public class ProfessorApiController {
     public ResponseEntity<TCC> createTCC(@RequestBody TCCDTO tccDTO) {
         TCC tcc = professorService.createTCC(tccDTO);
         return new ResponseEntity<>(tcc, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/tcc/{tccId}/interest/{studentId}")
+    public ResponseEntity<String> approveOrientation(@PathVariable Long tccId, @PathVariable Long studentId) {
+        professorService.approveOrientationInterest(tccId, studentId);
+        return new ResponseEntity<>(String.format(Constants.ORIENTATION_APPROVED_RESPONSE, tccId), HttpStatus.NO_CONTENT);
+    }
+
+    @DeleteMapping("/tcc/{tccId}/interest/{studentId}")
+    public ResponseEntity<String> refuseOrientation(@PathVariable Long tccId, @PathVariable Long studentId) {
+        professorService.refuseOrientationInterest(tccId, studentId);
+        return new ResponseEntity<>(String.format(Constants.ORIENTATION_REFUSED_RESPONSE, tccId), HttpStatus.NO_CONTENT);
     }
 }

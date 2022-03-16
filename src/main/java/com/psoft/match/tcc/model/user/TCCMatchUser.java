@@ -3,11 +3,13 @@ package com.psoft.match.tcc.model.user;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Objects;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-public abstract class User {
+public abstract class TCCMatchUser {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,14 +28,18 @@ public abstract class User {
     @JsonIgnore
     private UserRole role;
 
-    public User() {}
+    @ElementCollection
+    private Collection<String> emails;
 
-    public User(String fullName, String email, String username, String password, UserRole role) {
+    public TCCMatchUser() {}
+
+    public TCCMatchUser(String fullName, String email, String username, String password, UserRole role) {
         this.fullName = fullName;
         this.email = email;
         this.username = username;
         this.password = password;
         this.role = role;
+        this.emails = new ArrayList<>();
     }
 
     public Long getId() {
@@ -81,11 +87,19 @@ public abstract class User {
         this.role = role;
     }
 
+    public void receiveEmail(String email) {
+        this.emails.add(email);
+    }
+
+    public Collection<String> getEmails() {
+        return emails;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        User user = (User) o;
+        TCCMatchUser user = (TCCMatchUser) o;
         return email.equals(user.email);
     }
 

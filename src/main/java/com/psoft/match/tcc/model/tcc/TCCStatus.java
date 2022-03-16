@@ -5,7 +5,8 @@ import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum TCCStatus {
     PENDING("Pending"),
-    APPROVED("Approved");
+    ON_GOING("On going"),
+    FINISHED("Finished");
 	
 	private String tipo;
 	
@@ -20,9 +21,10 @@ public enum TCCStatus {
     
     @JsonCreator
     public static TCCStatus fromText(String texto) {
-        TCCStatus resultado;
-        if(texto.equals("Pending")) resultado = TCCStatus.PENDING;
-        else resultado = TCCStatus.APPROVED;
-        return resultado;
+        for (TCCStatus tccStatus : TCCStatus.values()) {
+            if (tccStatus.getTipo().equals(texto))
+                return tccStatus;
+        }
+        throw new RuntimeException("tcc sttus invalido");
     }
 }

@@ -2,15 +2,15 @@ package com.psoft.match.tcc.model.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.psoft.match.tcc.model.StudyArea;
-import com.psoft.match.tcc.model.tcc.orientation.OrientationProposal;
 import com.psoft.match.tcc.model.tcc.TCC;
 
 import javax.persistence.*;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Set;
 
 @Entity
-public class Professor extends User {
+public class Professor extends TCCMatchUser {
 
     @JsonIgnore
     @ElementCollection
@@ -25,11 +25,11 @@ public class Professor extends User {
 
     @JsonIgnore
     @OneToMany
-    private Collection<OrientationProposal> interestedTCCs;
+    private Set<TCC> interestedTCCs;
 
     @JsonIgnore
     @OneToMany
-    private Collection<TCC> orientedTCCs;
+    private Set<TCC> registeredTCCs;
 
     public Professor() {}
 
@@ -38,7 +38,7 @@ public class Professor extends User {
         this.interestedStudyAreas = new HashSet<>();
         this.interestedTCCs = new HashSet<>();
         this.labs = labs;
-        this.orientedTCCs = new HashSet<>();
+        this.registeredTCCs = new HashSet<>();
         this.quota = quota;
     }
 
@@ -66,28 +66,28 @@ public class Professor extends User {
         this.labs.remove(lab);
     }
 
-    public Collection<OrientationProposal> getInterestedTCCs() {
+    public Collection<TCC> getInterestedTCCs() {
         return interestedTCCs;
     }
 
-    public boolean addOrientationInterest(OrientationProposal orientationInterest) {
+    public boolean addOrientationInterest(TCC orientationInterest) {
         return this.interestedTCCs.add(orientationInterest);
     }
 
-    public boolean removeOrientationInterest(OrientationProposal orientationInterest) {
+    public boolean removeOrientationInterest(TCC orientationInterest) {
         return this.interestedTCCs.remove(orientationInterest);
     }
 
-    public Collection<TCC> getOrientedTCCs() {
-        return new HashSet<>(orientedTCCs);
+    public Collection<TCC> getRegisteredTCCs() {
+        return new HashSet<>(registeredTCCs);
     }
 
-    public boolean addOrientedTCC(TCC tcc) {
-        return this.orientedTCCs.add(tcc);
+    public boolean registerTCC(TCC tcc) {
+        return this.registeredTCCs.add(tcc);
     }
 
-    public boolean removeOrientedTCC(TCC tcc) {
-        return this.orientedTCCs.remove(tcc);
+    public boolean removeTCC(TCC tcc) {
+        return this.registeredTCCs.remove(tcc);
     }
 
     public Integer getQuota() {

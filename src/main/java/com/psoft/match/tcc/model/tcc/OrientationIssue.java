@@ -1,6 +1,5 @@
-package com.psoft.match.tcc.model.tcc.orientation;
+package com.psoft.match.tcc.model.tcc;
 
-import com.psoft.match.tcc.model.tcc.TCC;
 import com.psoft.match.tcc.model.user.Student;
 
 import javax.persistence.*;

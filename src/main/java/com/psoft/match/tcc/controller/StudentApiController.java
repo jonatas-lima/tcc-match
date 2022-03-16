@@ -1,10 +1,9 @@
 package com.psoft.match.tcc.controller;
 
 import com.psoft.match.tcc.dto.OrientationIssueDTO;
-import com.psoft.match.tcc.dto.TCCProposalDTO;
+import com.psoft.match.tcc.dto.TCCDTO;
 import com.psoft.match.tcc.model.StudyArea;
 import com.psoft.match.tcc.model.tcc.TCC;
-import com.psoft.match.tcc.model.tcc.TCCProposal;
 import com.psoft.match.tcc.model.user.Professor;
 import com.psoft.match.tcc.service.user.StudentService;
 import com.psoft.match.tcc.util.Constants;
@@ -36,7 +35,7 @@ public class StudentApiController {
 	@ApiOperation("Informa problema na orientação de um TCC")
     @PostMapping("/tcc/issue")
     public ResponseEntity<Void> registerTccOrientationIssue(@RequestBody OrientationIssueDTO orientationIssue) {
-        studentService.performTccOrientationIssue(orientationIssue);
+        studentService.registerOrientationIssue(orientationIssue);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
@@ -56,9 +55,9 @@ public class StudentApiController {
 
 	@ApiOperation(value = "Adiciona uma proposta de tcc no sistema")
 	@PostMapping(value = "/tcc_proposal")
-    public ResponseEntity<TCCProposal> addTccProposal(@RequestBody TCCProposalDTO tccProposalDTO) {
-		TCCProposal tccProposal = studentService.addTccProposal(tccProposalDTO);
-    	return new ResponseEntity<TCCProposal>(tccProposal, HttpStatus.CREATED);
+    public ResponseEntity<TCC> addTccProposal(@RequestBody TCCDTO tccDTO) {
+		TCC tccProposal = studentService.createTCC(tccDTO);
+    	return new ResponseEntity<>(tccProposal, HttpStatus.CREATED);
     }
 
 	@ApiOperation(value = "Lista os tccs cadastrados no sistema")

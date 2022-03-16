@@ -1,6 +1,6 @@
 package com.psoft.match.tcc.security;
 
-import com.psoft.match.tcc.model.user.User;
+import com.psoft.match.tcc.model.user.TCCMatchUser;
 import com.psoft.match.tcc.model.user.UserRole;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -23,7 +23,7 @@ public class AuthenticatedUser implements UserDetails {
         this.authorities = authorities;
     }
 
-    public AuthenticatedUser(User user) {
+    public AuthenticatedUser(TCCMatchUser user) {
         this(user.getId(), user.getUsername(), user.getPassword(), Arrays.asList(new SimpleGrantedAuthority(user.getRole().getDescription())));
     }
 

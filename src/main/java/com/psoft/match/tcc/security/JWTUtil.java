@@ -1,6 +1,8 @@
 package com.psoft.match.tcc.security;
 
+import com.psoft.match.tcc.util.exception.common.UnauthorizedException;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Value;
@@ -49,6 +51,10 @@ public class JWTUtil {
     }
 
     private Claims getClaims(String token) {
-        return Jwts.parser().setSigningKey(SECRET.getBytes()).parseClaimsJws(token).getBody();
+        try {
+            return Jwts.parser().setSigningKey(SECRET.getBytes()).parseClaimsJws(token).getBody();
+        } catch (ExpiredJwtException e) {
+            throw new UnauthorizedException("Expired token");
+        }
     }
 }
