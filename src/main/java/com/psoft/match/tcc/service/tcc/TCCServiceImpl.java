@@ -2,6 +2,7 @@ package com.psoft.match.tcc.service.tcc;
 
 import com.psoft.match.tcc.dto.TCCDTO;
 import com.psoft.match.tcc.model.tcc.TCC;
+import com.psoft.match.tcc.model.tcc.TCCStatus;
 import com.psoft.match.tcc.model.user.Professor;
 import com.psoft.match.tcc.model.user.Student;
 import com.psoft.match.tcc.repository.tcc.TCCRepository;
@@ -36,6 +37,11 @@ public class TCCServiceImpl implements TCCService {
                 .stream()
                 .filter(TCC::isAvailable)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<TCC> getTCCsByStatusAndTerm(TCCStatus tccStatus, String term) {
+        return tccRepository.findAllByTccStatusAndTerm(tccStatus, term);
     }
 
     @Transactional

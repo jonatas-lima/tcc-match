@@ -2,29 +2,31 @@ package com.psoft.match.tcc.model.tcc;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
+import com.psoft.match.tcc.util.exception.tcc.InvalidTCCStatusException;
 
 public enum TCCStatus {
-    PENDING("Pending"),
-    ON_GOING("On going"),
-    FINISHED("Finished");
+    PENDING("PENDING"),
+    APPROVED("APPROVED"),
+    ON_GOING("ON_GOING"),
+    FINISHED("FINISHED");
 	
-	private String tipo;
+	private String description;
 	
 	TCCStatus(String tipo){
-        this.tipo = tipo;
+        this.description = tipo;
     }
 
     @JsonValue
-    public String getTipo(){
-        return this.tipo;
+    public String getDescription(){
+        return this.description;
     }
     
     @JsonCreator
-    public static TCCStatus fromText(String texto) {
+    public static TCCStatus fromText(String description) {
         for (TCCStatus tccStatus : TCCStatus.values()) {
-            if (tccStatus.getTipo().equals(texto))
+            if (tccStatus.getDescription().equals(description))
                 return tccStatus;
         }
-        throw new RuntimeException("tcc sttus invalido");
+        throw new InvalidTCCStatusException(description);
     }
 }

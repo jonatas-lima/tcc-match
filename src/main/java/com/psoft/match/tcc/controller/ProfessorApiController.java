@@ -6,7 +6,6 @@ import com.psoft.match.tcc.service.user.ProfessorService;
 import com.psoft.match.tcc.util.Constants;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import jdk.vm.ci.meta.Constant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
