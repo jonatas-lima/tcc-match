@@ -23,4 +23,6 @@ public interface TCCService {
     TCC createTCC(TCCDTO tccDTO, Student student);
 
     TCC createTCC(TCCDTO tccDTO, Professor professor);
+
+    List<TCC> getStudentsTCCs();
 }

@@ -64,4 +64,12 @@ public class TCCServiceImpl implements TCCService {
         return this.saveTCC(tcc);
     }
 
+    @Override
+    public List<TCC> getStudentsTCCs() {
+        return this.getAllTccs()
+                .stream()
+                .filter(TCC::isCreatedByStudent)
+                .collect(Collectors.toList());
+    }
+
 }

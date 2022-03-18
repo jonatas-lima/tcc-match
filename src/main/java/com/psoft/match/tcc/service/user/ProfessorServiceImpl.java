@@ -10,7 +10,8 @@ import com.psoft.match.tcc.model.user.TCCMatchUser;
 import com.psoft.match.tcc.repository.user.ProfessorRepository;
 import com.psoft.match.tcc.service.study_area.StudyAreaService;
 import com.psoft.match.tcc.service.tcc.TCCService;
-import com.psoft.match.tcc.util.exception.professor.ProfessorNotFoundException;
+import com.psoft.match.tcc.util.exception.professor.*;
+import com.psoft.match.tcc.util.exception.student.StudentDoesNotHaveOrientationInterestException;
 import com.psoft.match.tcc.util.exception.user.UserAlreadyExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -127,8 +128,8 @@ public class ProfessorServiceImpl implements ProfessorService {
     }
 
     private void validateOrientation(Professor professor, TCC tcc, Student student) {
-        if (!professor.getRegisteredTCCs().contains(tcc)) throw new RuntimeException("tcc does not belong to professor");
-        if (!tcc.getInterestedStudents().contains(student)) throw new RuntimeException("student dont have interest");
+        if (!professor.getRegisteredTCCs().contains(tcc)) throw new TCCDoesNotBelongToProfessorException(tcc.getId(), professor.getFullName());
+        if (!tcc.getInterestedStudents().contains(student)) throw new StudentDoesNotHaveOrientationInterestException(student.getFullName());
     }
 
     @Transactional
@@ -154,6 +155,55 @@ public class ProfessorServiceImpl implements ProfessorService {
 
     @Transactional
     @Override
+    public void addInterestedStudyArea(Long studyAreaId) {
+        Professor professor = tccMatchUserService.getLoggedUser();
+        StudyArea studyArea = studyAreaService.findStudyAreaById(studyAreaId);
+
+        this.validateAddInterestedStudyArea(professor, studyArea);
+
+        professor.addInterestedStudyArea(studyArea);
+        studyArea.addInterestedProfessor(professor);
+
+        professorRepository.save(professor);
+        studyAreaService.saveStudyArea(studyArea);
+    }
+
+    private void validateAddInterestedStudyArea(Professor professor, StudyArea studyArea){
+        if(professor.getInterestedStudyAreas().contains(studyArea)){
+            throw new ProfessorAlreadyInterestedInStudyAreaException(professor.getFullName(), studyArea.getDescription());
+        }
+    }
+
+    @Transactional
+    @Override
+    public void updateQuota(Integer quota) {
+        Professor professor = tccMatchUserService.getLoggedUser();
+
+        this.validateQuota(quota);
+
+        professor.setQuota(quota);
+
+        professorRepository.save(professor);
+    }
+
+    private void validateQuota(Integer quota) {
+        if(quota < 0) throw new InvalidQuotaException();
+    }
+
+    @Override
+    public Collection<TCC> getRegisteredTCCs() {
+        Professor professor = tccMatchUserService.getLoggedUser();
+
+        return professor.getRegisteredTCCs();
+    }
+
+    @Override
+    public Collection<TCC> getStudentsTCCs() {
+        return tccService.getStudentsTCCs();
+    }
+
+    @Transactional
+    @Override
     public TCC createTCC(TCCDTO tccdto) {
         Professor professor = tccMatchUserService.getLoggedUser();
         Collection<StudyArea> studyAreas = studyAreaService.findStudyAreasById(tccdto.getStudyAreasIds());
@@ -167,6 +217,8 @@ public class ProfessorServiceImpl implements ProfessorService {
 
         return tcc;
     }
+
+
 
     private Professor buildProfessor(ProfessorDTO professorDTO) {
         String encryptedPassword = passwordEncoder.encode(professorDTO.getPassword());

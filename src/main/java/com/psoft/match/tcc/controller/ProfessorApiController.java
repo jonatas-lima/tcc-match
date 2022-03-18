@@ -1,7 +1,10 @@
 package com.psoft.match.tcc.controller;
 
+import com.psoft.match.tcc.dto.NewQuotaDTO;
 import com.psoft.match.tcc.dto.TCCDTO;
 import com.psoft.match.tcc.model.tcc.TCC;
+import com.psoft.match.tcc.response.SolicitationResponse;
+import com.psoft.match.tcc.response.TCCResponse;
 import com.psoft.match.tcc.service.user.ProfessorService;
 import com.psoft.match.tcc.util.Constants;
 import io.swagger.annotations.Api;
@@ -10,6 +13,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Api(tags = "Professor operations")
 @RestController
@@ -44,5 +51,41 @@ public class ProfessorApiController {
     public ResponseEntity<String> refuseOrientation(@PathVariable Long tccId, @PathVariable Long studentId) {
         professorService.refuseOrientationInterest(tccId, studentId);
         return new ResponseEntity<>(String.format(Constants.ORIENTATION_REFUSED_RESPONSE, tccId), HttpStatus.NO_CONTENT);
+    }
+
+    @PutMapping("/study-area/{studyAreaId}")
+    public ResponseEntity<Void> addInterestedStudyArea(@PathVariable Long studyAreaId) {
+        professorService.addInterestedStudyArea(studyAreaId);
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+    @PutMapping("/quota")
+    public ResponseEntity<Void> updateQuota(@RequestBody NewQuotaDTO newQuotaDTO) {
+        professorService.updateQuota(newQuotaDTO.getNewQuota());
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @ApiOperation("Lista os temas de TCC cadastrados pelo professor")
+    @GetMapping("/tcc")
+    public ResponseEntity<Collection<TCCResponse>> getRegisteredTCCs() {
+        Collection<TCC> professorTCCs = professorService.getRegisteredTCCs();
+        Collection<TCCResponse> response = professorTCCs.stream().map(TCCResponse::new).collect(Collectors.toList());
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @ApiOperation("Lista os temas de TCC cadastrados pelos alunos")
+    @GetMapping("/tcc/student")
+    public ResponseEntity<Collection<TCCResponse>> getStudentsTCCs() {
+        Collection<TCC> studentsTCCs = professorService.getStudentsTCCs();
+        Collection<TCCResponse> response = studentsTCCs.stream().map(TCCResponse::new).collect(Collectors.toList());
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @ApiOperation("Lista as solicitções de orientação em um TCC cadastradas pelos alunos")
+    @GetMapping("/tcc/solicitation")
+    public ResponseEntity<Collection<SolicitationResponse>> getStudentsSolicitations() {
+        Collection<TCC> professorTCCs = professorService.getRegisteredTCCs();
+        Collection<SolicitationResponse> response = professorTCCs.stream().map(SolicitationResponse::new).collect(Collectors.toList());
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }
