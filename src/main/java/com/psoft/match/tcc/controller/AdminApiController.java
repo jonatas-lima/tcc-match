@@ -2,10 +2,12 @@ package com.psoft.match.tcc.controller;
 
 import com.psoft.match.tcc.dto.ProfessorDTO;
 import com.psoft.match.tcc.dto.StudyAreaDTO;
+import com.psoft.match.tcc.dto.TCCOrientationDTO;
 import com.psoft.match.tcc.model.StudyArea;
 import com.psoft.match.tcc.model.tcc.TCC;
 import com.psoft.match.tcc.model.tcc.TCCStatus;
 import com.psoft.match.tcc.model.user.Professor;
+import com.psoft.match.tcc.response.TCCSummaryResponse;
 import com.psoft.match.tcc.service.user.AdminService;
 import com.psoft.match.tcc.util.Constants;
 import io.swagger.annotations.Api;
@@ -68,10 +70,22 @@ public class AdminApiController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @GetMapping("/tcc/")
+    @GetMapping("/tcc")
     @ApiOperation(value = "Consulta de TCCs (em andamento ou finalizados) de um período")
     public ResponseEntity<List<TCC>> getTCCs(@RequestParam String status, @RequestParam String term) {
         List<TCC> tccs = adminService.getTCCs(status, term);
         return new ResponseEntity<>(tccs, HttpStatus.OK);
+    }
+
+    @PostMapping("/tcc/student/")
+    public ResponseEntity<Void> registerTCC(@RequestBody TCCOrientationDTO tccOrientationDTO) {
+        adminService.registerTCC(tccOrientationDTO);
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+    @GetMapping("/tcc/summary")
+    public ResponseEntity<TCCSummaryResponse> getTCCSummary(@RequestParam String term) {
+        TCCSummaryResponse tccSummary = adminService.getTCCSummary(term);
+        return new ResponseEntity<>(tccSummary, HttpStatus.OK);
     }
 }
