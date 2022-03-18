@@ -194,6 +194,10 @@ public class TCC {
         this.tccStatus = TCCStatus.ON_GOING;
     }
 
+    public boolean isCreatedByStudent() {
+        return this.advisedStudent != null && advisor == null;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

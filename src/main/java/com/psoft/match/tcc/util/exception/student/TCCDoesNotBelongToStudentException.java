@@ -1,4 +1,4 @@
-package com.psoft.match.tcc.util.exception.tcc;
+package com.psoft.match.tcc.util.exception.student;
 
 import com.psoft.match.tcc.util.exception.common.UnauthorizedException;
 
