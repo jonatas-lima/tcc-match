@@ -32,7 +32,7 @@ public class TCC {
     @ManyToOne
     private Professor advisor;
 
-    @JsonIgnore
+//    @JsonIgnore
     @ManyToMany
     @JoinTable(
             joinColumns = @JoinColumn(name = "tcc_id"),
@@ -74,7 +74,7 @@ public class TCC {
     }
 
     public TCC(Professor advisor, String title, String description) {
-        this(advisor, title, description, null, new HashSet<>(), new HashSet<>(), TCCStatus.PENDING, new HashSet<>(), null);
+        this(advisor, title, description, null, new HashSet<>(), new HashSet<>(), TCCStatus.APPROVED, new HashSet<>(), null);
     }
 
     public TCC(Student advisedStudent, String title, String description) {
@@ -93,6 +93,7 @@ public class TCC {
         this.advisor = advisor;
     }
 
+    @JsonIgnore
     public boolean isAvailable() {
         return this.advisor == null || this.advisedStudent == null;
     }
