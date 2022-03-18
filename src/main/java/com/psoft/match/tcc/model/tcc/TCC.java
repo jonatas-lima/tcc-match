@@ -24,6 +24,8 @@ public class TCC {
 
     private String description;
 
+    private String term;
+
     @ManyToOne
     private Student advisedStudent;
 
@@ -59,7 +61,7 @@ public class TCC {
     public TCC() {
     }
 
-    public TCC(Professor advisor, String title, String description, Student advisedStudent, Collection<StudyArea> studyAreas, Collection<Student> interestedStudents, TCCStatus tccStatus, Collection<Professor> interestedProfessors) {
+    public TCC(Professor advisor, String title, String description, Student advisedStudent, Collection<StudyArea> studyAreas, Collection<Student> interestedStudents, TCCStatus tccStatus, Collection<Professor> interestedProfessors, String term) {
         this.advisor = advisor;
         this.title = title;
         this.description = description;
@@ -68,14 +70,15 @@ public class TCC {
         this.interestedStudents = interestedStudents;
         this.tccStatus = tccStatus;
         this.interestedProfessors = interestedProfessors;
+        this.term = term;
     }
 
     public TCC(Professor advisor, String title, String description) {
-        this(advisor, title, description, null, new HashSet<>(), new HashSet<>(), TCCStatus.PENDING, new HashSet<>());
+        this(advisor, title, description, null, new HashSet<>(), new HashSet<>(), TCCStatus.PENDING, new HashSet<>(), null);
     }
 
     public TCC(Student advisedStudent, String title, String description) {
-        this(null, title, description, advisedStudent, new HashSet<>(), new HashSet<>(), TCCStatus.PENDING, new HashSet<>());
+        this(null, title, description, advisedStudent, new HashSet<>(), new HashSet<>(), TCCStatus.PENDING, new HashSet<>(), null);
     }
 
     public Long getId() {
@@ -120,6 +123,14 @@ public class TCC {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getTerm() {
+        return term;
+    }
+
+    public void setTerm(String term) {
+        this.term = term;
     }
 
     public Student getAdvisedStudent() {

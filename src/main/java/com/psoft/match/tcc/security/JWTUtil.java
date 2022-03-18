@@ -1,5 +1,6 @@
 package com.psoft.match.tcc.security;
 
+import com.psoft.match.tcc.util.exception.auth.ExpiredTokenException;
 import com.psoft.match.tcc.util.exception.common.UnauthorizedException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -54,7 +55,7 @@ public class JWTUtil {
         try {
             return Jwts.parser().setSigningKey(SECRET.getBytes()).parseClaimsJws(token).getBody();
         } catch (ExpiredJwtException e) {
-            throw new UnauthorizedException("Expired token");
+            throw new ExpiredTokenException();
         }
     }
 }

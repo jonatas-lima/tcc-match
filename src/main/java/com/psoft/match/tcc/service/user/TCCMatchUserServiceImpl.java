@@ -25,7 +25,7 @@ public class TCCMatchUserServiceImpl implements TCCMatchUserService {
         try {
             return (T) authService.getLoggedUser();
         } catch (ClassCastException e) {
-            throw new UnauthorizedException("");
+            throw new UnauthorizedException();
         }
     }
 

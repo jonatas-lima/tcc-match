@@ -12,4 +12,6 @@ public interface EmailService {
     void notifyNewOrientationInterestToStudent(Student student, Professor interestedProfessor, TCC tcc);
 
     void notifyNewOrientationInterestToProfessor(Professor professor, Student interestedStudent, TCC tcc);
+
+    void notifyApprovedOrientationToAdmin(TCC tcc);
 }
