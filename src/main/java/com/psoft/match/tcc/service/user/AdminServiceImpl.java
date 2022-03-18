@@ -102,6 +102,17 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
+    public void finalizeTCC(Long tccId, String term) {
+        this.validateTerm(term);
+
+        TCC tcc = tccService.findTCCById(tccId);
+
+        tcc.setTerm(term);
+        tcc.finalizeTCC();
+        tccService.saveTCC(tcc);
+    }
+
+    @Override
     public TCCSummaryResponse getTCCSummary(String term) {
         this.validateTerm(term);
 

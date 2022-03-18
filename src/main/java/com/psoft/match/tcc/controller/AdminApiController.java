@@ -14,6 +14,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -87,5 +88,11 @@ public class AdminApiController {
     public ResponseEntity<TCCSummaryResponse> getTCCSummary(@RequestParam String term) {
         TCCSummaryResponse tccSummary = adminService.getTCCSummary(term);
         return new ResponseEntity<>(tccSummary, HttpStatus.OK);
+    }
+
+    @PutMapping("/tcc/{tccId}/finalize")
+    public ResponseEntity<Void> finalizeTCC(@PathVariable Long tccId, @RequestParam String term){
+        adminService.finalizeTCC(tccId, term);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

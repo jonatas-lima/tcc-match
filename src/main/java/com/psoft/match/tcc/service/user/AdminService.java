@@ -29,6 +29,8 @@ public interface AdminService {
 
     void registerTCC(TCCOrientationDTO tccOrientationDTO);
 
+    void finalizeTCC(Long tccId, String term);
+
     TCCSummaryResponse getTCCSummary(String term);
 
     List<TCC> getTCCs(String tccStatus, String term);

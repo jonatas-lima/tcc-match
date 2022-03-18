@@ -194,6 +194,10 @@ public class TCC {
         this.tccStatus = TCCStatus.ON_GOING;
     }
 
+    public void finalizeTCC() {
+        this.tccStatus = TCCStatus.FINISHED;
+    }
+
     public boolean isCreatedByStudent() {
         return this.advisedStudent != null && advisor == null;
     }
