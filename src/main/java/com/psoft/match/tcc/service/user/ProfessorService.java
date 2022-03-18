@@ -6,6 +6,7 @@ import com.psoft.match.tcc.model.tcc.TCC;
 import com.psoft.match.tcc.model.user.Professor;
 import com.psoft.match.tcc.model.user.Student;
 
+import java.util.Collection;
 import java.util.List;
 
 public interface ProfessorService  {
@@ -27,6 +28,14 @@ public interface ProfessorService  {
     void deleteProfessor(Long id);
 
     void declareOrientationInterest(Long tccProposalId);
+
+    void addInterestedStudyArea(Long studyAreaId);
+
+    void updateQuota(Integer quota);
+
+    Collection<TCC> getRegisteredTCCs();
+
+    Collection<TCC> getStudentsTCCs();
 
     TCC createTCC(TCCDTO tccdto);
 }
