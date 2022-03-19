@@ -88,4 +88,12 @@ public class ProfessorApiController {
         Collection<SolicitationResponse> response = professorTCCs.stream().map(SolicitationResponse::new).collect(Collectors.toList());
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+    
+    @ApiOperation("Lista os temas de TCC orientados pelo professor")
+    @GetMapping("/tcc/orientations")
+    public ResponseEntity<Collection<TCCResponse>> getOngoingGuidelines() {
+        Collection<TCC> professorTCCs = professorService.getOngoingGuidelines();
+        Collection<TCCResponse> response = professorTCCs.stream().map(TCCResponse::new).collect(Collectors.toList());
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 }

@@ -38,4 +38,6 @@ public interface ProfessorService  {
     Collection<TCC> getStudentsTCCs();
 
     TCC createTCC(TCCDTO tccdto);
+    
+    Collection<TCC> getOngoingGuidelines();
 }

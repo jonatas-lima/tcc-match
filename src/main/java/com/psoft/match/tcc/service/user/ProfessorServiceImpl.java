@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -230,5 +231,20 @@ public class ProfessorServiceImpl implements ProfessorService {
         oldProfessor.setUsername(newProfessor.getUsername());
         oldProfessor.setFullName(newProfessor.getFullName());
     }
+
+	@Override
+	public Collection<TCC> getOngoingGuidelines() {
+		Professor professor = tccMatchUserService.getLoggedUser();
+		Collection<TCC> orientations = new HashSet<TCC>();
+		
+        Collection<TCC> tccs = professor.getRegisteredTCCs();
+         
+        for(TCC tcc : tccs) {
+        	if(tcc.getAdvisedStudent() != null) {
+        		orientations.add(tcc);
+        	}
+        }
+        return orientations;
+	}
 
 }
