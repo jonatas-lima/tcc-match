@@ -1,11 +1,10 @@
 package com.psoft.match.tcc.model.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.psoft.match.tcc.model.tcc.OrientationIssue;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Objects;
+import java.util.*;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -31,6 +30,10 @@ public abstract class TCCMatchUser {
     @ElementCollection
     private Collection<String> emails;
 
+    @JsonIgnore
+    @OneToMany
+    private Set<OrientationIssue> orientationIssues;
+
     public TCCMatchUser() {}
 
     public TCCMatchUser(String fullName, String email, String username, String password, UserRole role) {
@@ -40,6 +43,7 @@ public abstract class TCCMatchUser {
         this.password = password;
         this.role = role;
         this.emails = new ArrayList<>();
+        this.orientationIssues = new HashSet<>();
     }
 
     public Long getId() {
@@ -93,6 +97,18 @@ public abstract class TCCMatchUser {
 
     public Collection<String> getEmails() {
         return emails;
+    }
+
+    public Set<OrientationIssue> getOrientationIssues() {
+        return orientationIssues;
+    }
+
+    public boolean addOrientationIssue(OrientationIssue orientationIssue) {
+        return this.orientationIssues.add(orientationIssue);
+    }
+
+    public boolean removeOrientationIssue(OrientationIssue orientationIssue) {
+        return this.orientationIssues.remove(orientationIssue);
     }
 
     @Override

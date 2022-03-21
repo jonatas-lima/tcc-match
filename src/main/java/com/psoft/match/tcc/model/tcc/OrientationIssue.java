@@ -3,6 +3,7 @@ package com.psoft.match.tcc.model.tcc;
 import com.psoft.match.tcc.model.user.TCCMatchUser;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
 public class OrientationIssue {
@@ -55,5 +56,18 @@ public class OrientationIssue {
 
     public void setTcc(TCC tcc) {
         this.tcc = tcc;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        OrientationIssue that = (OrientationIssue) o;
+        return id.equals(that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

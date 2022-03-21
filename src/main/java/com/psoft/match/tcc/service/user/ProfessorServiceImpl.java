@@ -1,5 +1,6 @@
 package com.psoft.match.tcc.service.user;
 
+import com.psoft.match.tcc.dto.OrientationIssueDTO;
 import com.psoft.match.tcc.dto.ProfessorDTO;
 import com.psoft.match.tcc.dto.TCCDTO;
 import com.psoft.match.tcc.model.StudyArea;
@@ -183,6 +184,19 @@ public class ProfessorServiceImpl implements ProfessorService {
         this.validateQuota(quota);
 
         professor.setQuota(quota);
+
+        professorRepository.save(professor);
+    }
+
+    @Transactional
+    @Override
+    public void registerOrientationIssue(Long tccId, OrientationIssueDTO orientationIssueDTO) {
+        Professor professor = tccMatchUserService.getLoggedUser();
+        TCC tcc = tccService.findTCCById(tccId);
+
+        if (professor.getRegisteredTCCs().contains(tcc)) throw new TCCDoesNotBelongToProfessorException(tccId, professor.getFullName());
+
+        tccMatchUserService.registerOrientationIssue(professor, tcc, orientationIssueDTO);
 
         professorRepository.save(professor);
     }
