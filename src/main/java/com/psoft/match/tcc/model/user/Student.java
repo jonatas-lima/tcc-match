@@ -18,10 +18,6 @@ public class Student extends TCCMatchUser {
     private String expectedConclusionTerm;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "student")
-    private Set<OrientationIssue> orientationIssues;
-
-    @JsonIgnore
     @ManyToMany
     @JoinTable(
             joinColumns = @JoinColumn(name = "interested_student_id"),
@@ -49,7 +45,6 @@ public class Student extends TCCMatchUser {
         this.registration = registration;
         this.expectedConclusionTerm = expectedConclusionTerm;
         this.interestedStudyAreas = new HashSet<>();
-        this.orientationIssues = new HashSet<>();
         this.orientationInterests = new HashSet<>();
         this.tccProposals = new HashSet<>();
         this.tcc = null;
@@ -81,18 +76,6 @@ public class Student extends TCCMatchUser {
 
     public boolean removeInterestedArea(StudyArea studyArea) {
         return this.interestedStudyAreas.remove(studyArea);
-    }
-
-    public Set<OrientationIssue> getOrientationIssues() {
-        return orientationIssues;
-    }
-
-    public boolean addOrientationIssue(OrientationIssue orientationIssue) {
-        return this.orientationIssues.add(orientationIssue);
-    }
-
-    public boolean removeOrientationIssue(OrientationIssue orientationIssue) {
-        return this.orientationIssues.remove(orientationIssue);
     }
 
     public boolean addOrientationInterest(TCC orientationInterest) {

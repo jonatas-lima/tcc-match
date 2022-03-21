@@ -30,7 +30,7 @@ public class Professor extends TCCMatchUser {
     @JsonIgnore
     @OneToMany
     private Set<TCC> registeredTCCs;
-
+    
     public Professor() {}
 
     public Professor(String fullName, String email, String username, String password, Collection<String> labs, Integer quota) {
@@ -45,7 +45,7 @@ public class Professor extends TCCMatchUser {
     public Collection<StudyArea> getInterestedStudyAreas() {
         return interestedStudyAreas;
     }
-
+    
     public boolean addInterestedStudyArea(StudyArea studyArea) {
         return this.interestedStudyAreas.add(studyArea);
     }

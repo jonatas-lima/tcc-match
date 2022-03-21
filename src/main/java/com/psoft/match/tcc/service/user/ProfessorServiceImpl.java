@@ -1,5 +1,6 @@
 package com.psoft.match.tcc.service.user;
 
+import com.psoft.match.tcc.dto.OrientationIssueDTO;
 import com.psoft.match.tcc.dto.ProfessorDTO;
 import com.psoft.match.tcc.dto.TCCDTO;
 import com.psoft.match.tcc.model.StudyArea;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -186,6 +188,19 @@ public class ProfessorServiceImpl implements ProfessorService {
         professorRepository.save(professor);
     }
 
+    @Transactional
+    @Override
+    public void registerOrientationIssue(Long tccId, OrientationIssueDTO orientationIssueDTO) {
+        Professor professor = tccMatchUserService.getLoggedUser();
+        TCC tcc = tccService.findTCCById(tccId);
+
+        if (professor.getRegisteredTCCs().contains(tcc)) throw new TCCDoesNotBelongToProfessorException(tccId, professor.getFullName());
+
+        tccMatchUserService.registerOrientationIssue(professor, tcc, orientationIssueDTO);
+
+        professorRepository.save(professor);
+    }
+
     private void validateQuota(Integer quota) {
         if(quota < 0) throw new InvalidQuotaException();
     }
@@ -230,5 +245,20 @@ public class ProfessorServiceImpl implements ProfessorService {
         oldProfessor.setUsername(newProfessor.getUsername());
         oldProfessor.setFullName(newProfessor.getFullName());
     }
+
+	@Override
+	public Collection<TCC> getOngoingGuidelines() {
+		Professor professor = tccMatchUserService.getLoggedUser();
+		Collection<TCC> orientations = new HashSet<TCC>();
+		
+        Collection<TCC> tccs = professor.getRegisteredTCCs();
+         
+        for(TCC tcc : tccs) {
+        	if(tcc.getAdvisedStudent() != null) {
+        		orientations.add(tcc);
+        	}
+        }
+        return orientations;
+	}
 
 }

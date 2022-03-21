@@ -1,5 +1,6 @@
 package com.psoft.match.tcc.service.user;
 
+import com.psoft.match.tcc.dto.OrientationIssueDTO;
 import com.psoft.match.tcc.dto.ProfessorDTO;
 import com.psoft.match.tcc.dto.TCCDTO;
 import com.psoft.match.tcc.model.tcc.TCC;
@@ -33,9 +34,13 @@ public interface ProfessorService  {
 
     void updateQuota(Integer quota);
 
+    void registerOrientationIssue(Long tccId, OrientationIssueDTO orientationIssueDTO);
+
     Collection<TCC> getRegisteredTCCs();
 
     Collection<TCC> getStudentsTCCs();
 
     TCC createTCC(TCCDTO tccdto);
+    
+    Collection<TCC> getOngoingGuidelines();
 }

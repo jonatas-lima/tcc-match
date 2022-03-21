@@ -32,7 +32,7 @@ public class TCC {
     @ManyToOne
     private Professor advisor;
 
-//    @JsonIgnore
+    @JsonIgnore
     @ManyToMany
     @JoinTable(
             joinColumns = @JoinColumn(name = "tcc_id"),

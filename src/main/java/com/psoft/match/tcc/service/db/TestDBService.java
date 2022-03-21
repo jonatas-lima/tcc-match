@@ -149,6 +149,7 @@ public class TestDBService implements DBService {
 
         student1.setTcc(tcc1);
         tcc1.setAdvisedStudent(student1);
+        tcc1.setTerm("2020.1");
 
         tccRepository.saveAll(tccs);
     }
