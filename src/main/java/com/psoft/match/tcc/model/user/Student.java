@@ -6,7 +6,6 @@ import com.psoft.match.tcc.model.tcc.OrientationIssue;
 import com.psoft.match.tcc.model.tcc.TCC;
 
 import javax.persistence.*;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -18,7 +17,7 @@ public class Student extends TCCMatchUser {
     private String expectedConclusionTerm;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "student")
+    @OneToMany(mappedBy = "user")
     private Set<OrientationIssue> orientationIssues;
 
     @JsonIgnore

@@ -1,6 +1,7 @@
 package com.psoft.match.tcc.model.tcc;
 
 import com.psoft.match.tcc.model.user.Student;
+import com.psoft.match.tcc.model.user.TCCMatchUser;
 
 import javax.persistence.*;
 
@@ -14,8 +15,8 @@ public class OrientationIssue {
     private String relatedIssue;
 
     @ManyToOne
-    @JoinColumn(name = "student_id")
-    private Student student;
+    @JoinColumn(name = "tccmatch_user_id")
+    private TCCMatchUser user;
 
     @ManyToOne
     @JoinColumn(name = "tcc_id")
@@ -23,9 +24,9 @@ public class OrientationIssue {
 
     public OrientationIssue() {}
 
-    public OrientationIssue(String relatedIssue, Student student, TCC tcc) {
+    public OrientationIssue(String relatedIssue, Student user, TCC tcc) {
         this.relatedIssue = relatedIssue;
-        this.student = student;
+        this.user = user;
         this.tcc = tcc;
     }
 
@@ -41,12 +42,12 @@ public class OrientationIssue {
         this.relatedIssue = relatedIssue;
     }
 
-    public Student getStudent() {
-        return student;
+    public TCCMatchUser getUser() {
+        return user;
     }
 
-    public void setStudent(Student student) {
-        this.student = student;
+    public void setUser(TCCMatchUser user) {
+        this.user = user;
     }
 
     public TCC getTcc() {
