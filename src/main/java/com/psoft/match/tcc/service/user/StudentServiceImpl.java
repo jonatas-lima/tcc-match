@@ -56,12 +56,8 @@ public class StudentServiceImpl implements StudentService {
         Student student = tccMatchUserService.getLoggedUser();
         TCC tcc = student.getTcc();
 
-        OrientationIssue orientationIssue = new OrientationIssue(orientationIssueDTO.getRelatedIssue(), student, tcc);
-        student.addOrientationIssue(orientationIssue);
-
-        orientationIssueService.saveOrientationIssue(orientationIssue);
+        tccMatchUserService.registerOrientationIssue(student, tcc, orientationIssueDTO);
         studentRepository.save(student);
-        tccService.saveTCC(tcc);
     }
 
     @Transactional
