@@ -15,7 +15,7 @@ public class OrientationIssue {
     private String relatedIssue;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "tccmatch_user_id")
     private TCCMatchUser user;
 
     @ManyToOne
@@ -46,8 +46,8 @@ public class OrientationIssue {
         return user;
     }
 
-    public void setUser(TCCMatchUser newUser) {
-        this.user = newUser;
+    public void setUser(TCCMatchUser user) {
+        this.user = user;
     }
 
     public TCC getTcc() {

@@ -77,7 +77,7 @@ public class AdminApiController {
         return new ResponseEntity<>(tccs, HttpStatus.OK);
     }
 
-    @PostMapping("/tcc/student/")
+    @PostMapping("/tcc/student")
     public ResponseEntity<Void> registerTCC(@RequestBody TCCOrientationDTO tccOrientationDTO) {
         adminService.registerTCC(tccOrientationDTO);
         return new ResponseEntity<>(HttpStatus.CREATED);

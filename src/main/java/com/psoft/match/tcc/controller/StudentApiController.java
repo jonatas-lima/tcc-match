@@ -40,22 +40,22 @@ public class StudentApiController {
     }
 
 	@ApiOperation(value = "Adiciona uma área de estudo no estudante logado")
-	@PutMapping(value = "/study_area/{idStudyArea}")
+	@PutMapping(value = "/study-area/{idStudyArea}")
     public ResponseEntity<StudyArea> addInterestedStudyArea(@PathVariable Long idStudyArea) {
 		StudyArea addedStudyArea = studentService.addInterestedStudyArea(idStudyArea);
 		return new ResponseEntity<>(addedStudyArea, HttpStatus.OK);
 	}
 
 	@ApiOperation(value = "Lista os professores que tem interesse nas áreas do estudante")
-	@GetMapping(value = "/professors")
+	@GetMapping(value = "/study-area/professor")
     public ResponseEntity<List<Professor>> listInterestedProfessors() {
 		List<Professor> professors = studentService.listInterestedProfessors();
 		return new ResponseEntity<>(professors, HttpStatus.OK);
 	}
 
 	@ApiOperation(value = "Adiciona uma proposta de tcc no sistema")
-	@PostMapping(value = "/tcc_proposal")
-    public ResponseEntity<TCC> addTccProposal(@RequestBody TCCDTO tccDTO) {
+	@PostMapping(value = "/tcc")
+    public ResponseEntity<TCC> registerTCC(@RequestBody TCCDTO tccDTO) {
 		TCC tccProposal = studentService.createTCC(tccDTO);
     	return new ResponseEntity<>(tccProposal, HttpStatus.CREATED);
     }
