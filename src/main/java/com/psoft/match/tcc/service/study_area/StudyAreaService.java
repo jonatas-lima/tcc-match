@@ -1,17 +1,13 @@
 package com.psoft.match.tcc.service.study_area;
 
-import com.psoft.match.tcc.dto.StudyAreaDTO;
 import com.psoft.match.tcc.model.StudyArea;
 import com.psoft.match.tcc.model.tcc.TCC;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 public interface StudyAreaService {
-
-    StudyArea createStudyArea(StudyAreaDTO studyAreaDTO);
-
-    StudyArea updateStudyArea(Long id, StudyAreaDTO studyAreaDTO);
 
     StudyArea saveStudyArea(StudyArea studyArea);
 
@@ -21,7 +17,9 @@ public interface StudyAreaService {
 
     void notifyNewTCCToInterestedStudents(Collection<StudyArea> studyAreas, TCC tcc);
 
-    void deleteStudyArea(Long id);
+    void deleteStudyArea(StudyArea studyArea);
     
     StudyArea findStudyAreaById(Long id);
+
+    Optional<StudyArea> findStudyAreaByDescriptionOpt(String description);
 }

@@ -3,11 +3,13 @@ package com.psoft.match.tcc.model.user;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.psoft.match.tcc.model.StudyArea;
 import com.psoft.match.tcc.model.tcc.TCC;
+import com.psoft.match.tcc.model.tcc.TCCStatus;
 
 import javax.persistence.*;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 public class Professor extends TCCMatchUser {
@@ -24,11 +26,15 @@ public class Professor extends TCCMatchUser {
     private Collection<StudyArea> interestedStudyAreas;
 
     @JsonIgnore
-    @OneToMany
+    @ManyToMany
+    @JoinTable(
+            joinColumns = @JoinColumn(name = "professor_id"),
+            inverseJoinColumns = @JoinColumn(name = "tcc_id")
+    )
     private Set<TCC> interestedTCCs;
 
     @JsonIgnore
-    @OneToMany
+    @OneToMany(mappedBy = "advisor")
     private Set<TCC> registeredTCCs;
     
     public Professor() {}
@@ -70,6 +76,10 @@ public class Professor extends TCCMatchUser {
         return interestedTCCs;
     }
 
+    public Collection<TCC> getTCCOrientations() {
+        return this.registeredTCCs.stream().filter(tcc -> tcc.getTccStatus().equals(TCCStatus.ON_GOING)).collect(Collectors.toList());
+    }
+
     public boolean addOrientationInterest(TCC orientationInterest) {
         return this.interestedTCCs.add(orientationInterest);
     }
@@ -98,11 +108,26 @@ public class Professor extends TCCMatchUser {
         this.quota = quota;
     }
 
-    public void decrementQuota() {
-        this.quota--;
+    public boolean isAvailable() {
+        return this.getTCCOrientations().size() < this.quota;
     }
 
-    public void incrementQuota() {
-        this.quota++;
+    public boolean hasSharedInterestedWith(Student student) {
+        for (StudyArea s : student.getInterestedStudyAreas()) {
+            if (this.getInterestedStudyAreas().contains(s)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @PreRemove
+    private void preRemove() {
+        this.registeredTCCs.forEach(tcc -> {
+            tcc.setAdvisor(null);
+            tcc.setTccStatus(TCCStatus.PENDING);
+            tcc.setTerm(null);
+        });
+        this.interestedTCCs.forEach(tcc -> tcc.removeOrientationInterest(this));
     }
 }
