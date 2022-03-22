@@ -3,7 +3,6 @@ package com.psoft.match.tcc.service.user;
 import com.psoft.match.tcc.dto.OrientationIssueDTO;
 import com.psoft.match.tcc.dto.TCCDTO;
 import com.psoft.match.tcc.model.StudyArea;
-import com.psoft.match.tcc.model.tcc.OrientationIssue;
 import com.psoft.match.tcc.model.tcc.TCC;
 import com.psoft.match.tcc.model.user.Professor;
 import com.psoft.match.tcc.model.user.Student;
@@ -11,14 +10,12 @@ import com.psoft.match.tcc.repository.user.StudentRepository;
 import com.psoft.match.tcc.service.email.EmailService;
 import com.psoft.match.tcc.service.study_area.StudyAreaService;
 import com.psoft.match.tcc.service.tcc.TCCService;
-import com.psoft.match.tcc.service.tcc.orientation.OrientationIssueService;
 import com.psoft.match.tcc.util.exception.student.StudentNotFoundException;
 import com.psoft.match.tcc.util.exception.tcc.UnavailableTCCException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.Collection;
 import java.util.List;
 
 @Service
@@ -34,9 +31,6 @@ public class StudentServiceImpl implements StudentService {
     private StudyAreaService studyAreaService;
 
     @Autowired
-    private OrientationIssueService orientationIssueService;
-
-    @Autowired
     private ProfessorService professorService;
 
     @Autowired
@@ -45,23 +39,14 @@ public class StudentServiceImpl implements StudentService {
     @Autowired
     private EmailService emailService;
 
-    @Override
-    public Collection<Student> getAllStudents() {
-        return studentRepository.findAll();
-    }
-
     @Transactional
     @Override
     public void registerOrientationIssue(OrientationIssueDTO orientationIssueDTO) {
         Student student = tccMatchUserService.getLoggedUser();
         TCC tcc = student.getTcc();
 
-        OrientationIssue orientationIssue = new OrientationIssue(orientationIssueDTO.getRelatedIssue(), student, tcc);
-        student.addOrientationIssue(orientationIssue);
-
-        orientationIssueService.saveOrientationIssue(orientationIssue);
+        tccMatchUserService.registerOrientationIssue(student, tcc, orientationIssueDTO);
         studentRepository.save(student);
-        tccService.saveTCC(tcc);
     }
 
     @Transactional
@@ -78,12 +63,13 @@ public class StudentServiceImpl implements StudentService {
         interestedTcc.addOrientationInterest(student);
 
         emailService.notifyNewOrientationInterestToProfessor(interestedTcc.getAdvisor(), student, interestedTcc);
+
         tccService.saveTCC(interestedTcc);
         studentRepository.save(student);
     }
 
     @Override
-    public Student findById(Long id) {
+    public Student findStudentById(Long id) {
         return studentRepository.findById(id).orElseThrow(() -> new StudentNotFoundException(id));
     }
 
@@ -91,6 +77,12 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public Student saveStudent(Student student) {
         return studentRepository.save(student);
+    }
+
+    @Transactional
+    @Override
+    public void deleteStudent(Student student) {
+        studentRepository.delete(student);
     }
 
     @Override

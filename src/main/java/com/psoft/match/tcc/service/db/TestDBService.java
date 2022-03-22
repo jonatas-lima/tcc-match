@@ -44,15 +44,17 @@ public class TestDBService implements DBService {
     public void seed() {
         Admin admin = new Admin("admin", "admin@admim.com", "admin", passwordEncoder.encode("admin"));
 
-        Professor professor1 = new Professor("Elmar Melcher", "elmar@gmail.com", "elmar", passwordEncoder.encode("1234"), Arrays.asList("LSD", "SPLAB"), 10);
-        Professor professor2 = new Professor("Francisco Vilar", "fubica@gmail.com", "fubica", passwordEncoder.encode("1234"), Arrays.asList("LSD"), 2);
-        Professor professor3 = new Professor("Joao Arthur", "joao.arthur@gmail.com", "joao_arthur", passwordEncoder.encode("1234"), new ArrayList<>(), 0);
+        Professor professor1 = new Professor("Elmar Melcher", "elmardfsaidfhaisdfhasidfhfhasiufhsduifhasdf@gmail.com", "elmar", passwordEncoder.encode("1234"), Arrays.asList("LSD", "SPLAB"), 10);
+        Professor professor2 = new Professor("Francisco Vilar", "asdiasiodjaodijasoidjasiod@gmail.com", "fubica", passwordEncoder.encode("1234"), Arrays.asList("LSD"), 2);
+        Professor professor3 = new Professor("Joao Arthur", "ajskdhakjsdhajkdhaksjdhajkhdkasdhjk@gmail.com", "joao_arthur", passwordEncoder.encode("1234"), new ArrayList<>(), 0);
 
-        Student student1 = new Student("Jonatas Ferreira de Lima", "119210036", "ferreiradelimajonatas@gmail.com", "2024.2", "jonatas", passwordEncoder.encode("1234"));
+        Student student1 = new Student("Jonatas Ferreira de Lima", "119210036", "jonatas.lima@ccc.ufcg.edu.br", "2024.2", "jonatas", passwordEncoder.encode("1234"));
         Student student2 = new Student("Bernard Dantas Odon", "123", "bernard.odon@ccc.ufcg.edu.br", "2024.2", "bodon", passwordEncoder.encode("1234"));
         Student student3 = new Student("Marcos Cosson", "123", "marcos.cosson@ccc.ufcg.edu.br", "2023.1", "marcos", passwordEncoder.encode("1234"));
+        Student student4 = new Student("Kleber Sobrinho", "123", "kleber.sobrinho@ccc.ufcg.edu.br", "2023.1", "marcos", passwordEncoder.encode("1234"));
+        Student student5 = new Student("Joao Vitor Moura", "123", "joao.vitor.figueiredo@ccc.ufcg.edu.br", "2023.1", "marcos", passwordEncoder.encode("1234"));
 
-        List<TCCMatchUser> users = Arrays.asList(admin, student1, student2, student3, professor1, professor2, professor3);
+        List<TCCMatchUser> users = Arrays.asList(admin, student1, student2, student3, student4, student5, professor1, professor2, professor3);
 
         List<Student> students = Arrays.asList(student1, student2, student3);
         List<Professor> professors = Arrays.asList(professor1, professor2, professor3);
@@ -68,6 +70,15 @@ public class TestDBService implements DBService {
 
         List<StudyArea> studyAreas = Arrays.asList(studyArea1, studyArea2, studyArea3, studyArea4);
         studyAreaRepository.saveAll(studyAreas);
+
+        studyArea4.addInterestedStudent(student3);
+        student3.addInterestedArea(studyArea4);
+
+        studyArea2.addInterestedStudent(student4);
+        student4.addInterestedArea(studyArea2);
+
+        studyArea2.addInterestedStudent(student4);
+        student5.addInterestedArea(studyArea2);
 
         studyArea1.addInterestedProfessor(professor1);
         studyArea2.addInterestedProfessor(professor1);
@@ -149,6 +160,7 @@ public class TestDBService implements DBService {
 
         student1.setTcc(tcc1);
         tcc1.setAdvisedStudent(student1);
+        tcc1.setTerm("2020.1");
 
         tccRepository.saveAll(tccs);
     }

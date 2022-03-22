@@ -1,8 +1,13 @@
 package com.psoft.match.tcc.service.user;
 
+import com.psoft.match.tcc.dto.OrientationIssueDTO;
+import com.psoft.match.tcc.model.tcc.OrientationIssue;
+import com.psoft.match.tcc.model.tcc.TCC;
 import com.psoft.match.tcc.model.user.TCCMatchUser;
+import com.psoft.match.tcc.repository.tcc.OrientationIssueRepository;
 import com.psoft.match.tcc.repository.user.TCCMatchUserRepository;
 import com.psoft.match.tcc.service.auth.AuthService;
+import com.psoft.match.tcc.service.tcc.orientation.OrientationIssueService;
 import com.psoft.match.tcc.util.exception.common.UnauthorizedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -19,6 +24,9 @@ public class TCCMatchUserServiceImpl implements TCCMatchUserService {
 
     @Autowired
     private TCCMatchUserRepository tccMatchUserRepository;
+
+    @Autowired
+    private OrientationIssueService orientationIssueService;
 
     @Override
     public <T extends TCCMatchUser> T getLoggedUser() {
@@ -39,6 +47,16 @@ public class TCCMatchUserServiceImpl implements TCCMatchUserService {
     @Override
     public void deleteUser(TCCMatchUser user) {
         tccMatchUserRepository.delete(user);
+    }
+
+    @Transactional
+    @Override
+    public void registerOrientationIssue(TCCMatchUser user, TCC tcc, OrientationIssueDTO orientationIssueDTO) {
+        OrientationIssue orientationIssue = new OrientationIssue(orientationIssueDTO.getRelatedIssue(), user, tcc);
+        user.addOrientationIssue(orientationIssue);
+
+        orientationIssueService.saveOrientationIssue(orientationIssue);
+        tccMatchUserRepository.save(user);
     }
 
     @Override

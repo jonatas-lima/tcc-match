@@ -2,11 +2,9 @@ package com.psoft.match.tcc.model.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.psoft.match.tcc.model.StudyArea;
-import com.psoft.match.tcc.model.tcc.OrientationIssue;
 import com.psoft.match.tcc.model.tcc.TCC;
 
 import javax.persistence.*;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -18,13 +16,9 @@ public class Student extends TCCMatchUser {
     private String expectedConclusionTerm;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "student")
-    private Set<OrientationIssue> orientationIssues;
-
-    @JsonIgnore
     @ManyToMany
     @JoinTable(
-            joinColumns = @JoinColumn(name = "interested_student_id"),
+            joinColumns = @JoinColumn(name = "student_id"),
             inverseJoinColumns = @JoinColumn(name = "tcc_id")
     )
     private Set<TCC> orientationInterests;
@@ -49,7 +43,6 @@ public class Student extends TCCMatchUser {
         this.registration = registration;
         this.expectedConclusionTerm = expectedConclusionTerm;
         this.interestedStudyAreas = new HashSet<>();
-        this.orientationIssues = new HashSet<>();
         this.orientationInterests = new HashSet<>();
         this.tccProposals = new HashSet<>();
         this.tcc = null;
@@ -83,18 +76,6 @@ public class Student extends TCCMatchUser {
         return this.interestedStudyAreas.remove(studyArea);
     }
 
-    public Set<OrientationIssue> getOrientationIssues() {
-        return orientationIssues;
-    }
-
-    public boolean addOrientationIssue(OrientationIssue orientationIssue) {
-        return this.orientationIssues.add(orientationIssue);
-    }
-
-    public boolean removeOrientationIssue(OrientationIssue orientationIssue) {
-        return this.orientationIssues.remove(orientationIssue);
-    }
-
     public boolean addOrientationInterest(TCC orientationInterest) {
         return this.orientationInterests.add(orientationInterest);
     }
@@ -119,7 +100,9 @@ public class Student extends TCCMatchUser {
         this.tcc = tcc;
     }
 
-    public void notifyNewTCC(String studyAreaDescription) {
-        System.out.printf("%s : Novo TCC cadastrado na área %s\n", getFullName(), studyAreaDescription);
+    @PreRemove
+    private void preRemove() {
+        if (this.tcc != null) this.tcc.setAdvisedStudent(null);
+        this.tccProposals.forEach(tcc -> tcc.setAdvisedStudent(null));
     }
 }

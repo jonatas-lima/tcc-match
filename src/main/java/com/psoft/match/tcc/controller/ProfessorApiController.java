@@ -1,6 +1,7 @@
 package com.psoft.match.tcc.controller;
 
 import com.psoft.match.tcc.dto.NewQuotaDTO;
+import com.psoft.match.tcc.dto.OrientationIssueDTO;
 import com.psoft.match.tcc.dto.TCCDTO;
 import com.psoft.match.tcc.model.tcc.TCC;
 import com.psoft.match.tcc.response.SolicitationResponse;
@@ -15,7 +16,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.stream.Collectors;
 
 @Api(tags = "Professor operations")
@@ -41,24 +41,28 @@ public class ProfessorApiController {
         return new ResponseEntity<>(tcc, HttpStatus.CREATED);
     }
 
+    @ApiOperation("Aprova a solicitação de orientação de um aluno em um TCC")
     @PostMapping("/tcc/{tccId}/interest/{studentId}")
     public ResponseEntity<String> approveOrientation(@PathVariable Long tccId, @PathVariable Long studentId) {
         professorService.approveOrientationInterest(tccId, studentId);
         return new ResponseEntity<>(String.format(Constants.ORIENTATION_APPROVED_RESPONSE, tccId), HttpStatus.NO_CONTENT);
     }
 
+    @ApiOperation("Recusa a solicitação de orientação de um aluno em um TCC")
     @DeleteMapping("/tcc/{tccId}/interest/{studentId}")
     public ResponseEntity<String> refuseOrientation(@PathVariable Long tccId, @PathVariable Long studentId) {
         professorService.refuseOrientationInterest(tccId, studentId);
         return new ResponseEntity<>(String.format(Constants.ORIENTATION_REFUSED_RESPONSE, tccId), HttpStatus.NO_CONTENT);
     }
 
+    @ApiOperation("Adiciona uma área de estudo nos interesses do professor")
     @PutMapping("/study-area/{studyAreaId}")
     public ResponseEntity<Void> addInterestedStudyArea(@PathVariable Long studyAreaId) {
         professorService.addInterestedStudyArea(studyAreaId);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
+    @ApiOperation("Atualiza a quota do professor")
     @PutMapping("/quota")
     public ResponseEntity<Void> updateQuota(@RequestBody NewQuotaDTO newQuotaDTO) {
         professorService.updateQuota(newQuotaDTO.getNewQuota());
@@ -87,5 +91,20 @@ public class ProfessorApiController {
         Collection<TCC> professorTCCs = professorService.getRegisteredTCCs();
         Collection<SolicitationResponse> response = professorTCCs.stream().map(SolicitationResponse::new).collect(Collectors.toList());
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+    
+    @ApiOperation("Lista os temas de TCC orientados pelo professor")
+    @GetMapping("/tcc/orientation")
+    public ResponseEntity<Collection<TCCResponse>> getOngoingGuidelines() {
+        Collection<TCC> professorTCCs = professorService.getOngoingGuidelines();
+        Collection<TCCResponse> response = professorTCCs.stream().map(TCCResponse::new).collect(Collectors.toList());
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @ApiOperation("Registra algum problema na orientação de um TCC orientado pelo professor")
+    @PostMapping("/tcc/{tccId}/issue")
+    public ResponseEntity<Void> registerOrientationIssue(@PathVariable Long tccId, @RequestBody OrientationIssueDTO orientationIssueDTO) {
+        professorService.registerOrientationIssue(tccId, orientationIssueDTO);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 }

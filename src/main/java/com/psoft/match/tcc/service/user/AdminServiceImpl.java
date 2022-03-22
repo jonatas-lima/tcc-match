@@ -1,6 +1,7 @@
 package com.psoft.match.tcc.service.user;
 
 import com.psoft.match.tcc.dto.ProfessorDTO;
+import com.psoft.match.tcc.dto.StudentDTO;
 import com.psoft.match.tcc.dto.StudyAreaDTO;
 import com.psoft.match.tcc.dto.TCCOrientationDTO;
 import com.psoft.match.tcc.model.StudyArea;
@@ -9,18 +10,23 @@ import com.psoft.match.tcc.model.tcc.TCCStatus;
 import com.psoft.match.tcc.model.user.Admin;
 import com.psoft.match.tcc.model.user.Professor;
 import com.psoft.match.tcc.model.user.Student;
+import com.psoft.match.tcc.model.user.TCCMatchUser;
 import com.psoft.match.tcc.repository.user.AdminRepository;
 import com.psoft.match.tcc.response.TCCSummaryResponse;
 import com.psoft.match.tcc.service.study_area.StudyAreaService;
 import com.psoft.match.tcc.service.tcc.TCCService;
+import com.psoft.match.tcc.util.exception.studyarea.StudyAreaAlreadyExistsException;
 import com.psoft.match.tcc.util.exception.tcc.InvalidTermException;
 import com.psoft.match.tcc.util.exception.tcc.PendingTCCException;
+import com.psoft.match.tcc.util.exception.user.UserAlreadyExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Function;
 import java.util.regex.Pattern;
 
 @Service
@@ -36,10 +42,16 @@ public class AdminServiceImpl implements AdminService {
     private StudentService studentService;
 
     @Autowired
+    private TCCMatchUserService tccMatchUserService;
+
+    @Autowired
     private StudyAreaService studyAreaService;
 
     @Autowired
     private TCCService tccService;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Override
     public List<Admin> findAllAdmins() {
@@ -49,56 +61,144 @@ public class AdminServiceImpl implements AdminService {
     @Transactional
     @Override
     public Professor createProfessor(ProfessorDTO professorDTO) {
-        return professorService.createProfessor(professorDTO);
+        TCCMatchUser user = tccMatchUserService.findByEmailOpt(professorDTO.getEmail()).orElse(null);
+        if (user != null) throw new UserAlreadyExistsException(professorDTO.getEmail());
+
+        Professor professor = this.buildProfessor(professorDTO);
+        tccMatchUserService.saveUser(professor);
+        return professorService.saveProfessor(professor);
     }
 
     @Transactional
     @Override
-    public StudyArea createStudyArea(StudyAreaDTO studyAreaDTO) {
-        return studyAreaService.createStudyArea(studyAreaDTO);
+    public StudyArea createStudyArea(StudyAreaDTO studyAreaDTO){
+        StudyArea studyArea = studyAreaService.findStudyAreaByDescriptionOpt(studyAreaDTO.getDescription()).orElse(null);
+        if (studyArea != null) {
+            throw new StudyAreaAlreadyExistsException(studyAreaDTO.getDescription());
+        }
+
+        StudyArea newStudyArea = this.buildStudyArea(studyAreaDTO);
+        return studyAreaService.saveStudyArea(newStudyArea);
     }
 
     @Transactional
     @Override
-    public Professor updateProfessor(Long professorId, ProfessorDTO professorDTO) {
-        return professorService.updateProfessor(professorId, professorDTO);
+    public Professor updateProfessor(Long id, ProfessorDTO professorDTO) {
+        Professor professor = professorService.findProfessorById(id);
+
+        this.updateProfessorFields(professor, professorDTO);
+
+        tccMatchUserService.saveUser(professor);
+        return professorService.saveProfessor(professor);
+    }
+
+    private void updateProfessorFields(Professor professor, ProfessorDTO professorDTO) {
+        if (professorDTO.getFullName() != null) {
+            professor.setFullName(professorDTO.getFullName());
+        }
+        if (professorDTO.getUsername() != null) {
+            professor.setUsername(professorDTO.getUsername());
+        }
+        if (professorDTO.getEmail() != null) {
+            professor.setEmail(professorDTO.getEmail());
+        }
     }
 
     @Transactional
     @Override
-    public StudyArea updateStudyArea(Long studyAreaId, StudyAreaDTO studyArea) {
-        return studyAreaService.updateStudyArea(studyAreaId, studyArea);
+    public Student createStudent(StudentDTO studentDTO) {
+        TCCMatchUser user = tccMatchUserService.findByEmailOpt(studentDTO.getEmail()).orElse(null);
+        if (user != null) throw new UserAlreadyExistsException(studentDTO.getEmail());
+
+        Student student = this.buildStudent(studentDTO);
+        tccMatchUserService.saveUser(student);
+        return studentService.saveStudent(student);
+    }
+
+    @Transactional
+    @Override
+    public StudyArea updateStudyArea(Long studyAreaId, StudyAreaDTO studyAreaDTO) {
+        StudyArea studyArea = studyAreaService.findStudyAreaById(studyAreaId);
+        studyArea.setDescription(studyAreaDTO.getDescription());
+        return studyAreaService.saveStudyArea(studyArea);
+    }
+
+    @Transactional
+    @Override
+    public Student updateStudent(Long studentId, StudentDTO studentDTO) {
+        Student student = studentService.findStudentById(studentId);
+
+        this.updateStudentFields(student, studentDTO);
+
+        tccMatchUserService.saveUser(student);
+        return studentService.saveStudent(student);
+    }
+
+    private void updateStudentFields(Student oldStudent, StudentDTO newStudent) {
+        if (newStudent.getEmail() != null) {
+            oldStudent.setEmail(newStudent.getEmail());
+        }
+        if (newStudent.getUsername() != null) {
+            oldStudent.setUsername(newStudent.getUsername());
+        }
+        if (newStudent.getFullName() != null) {
+            oldStudent.setFullName(newStudent.getFullName());
+        }
+        if (newStudent.getRegistration() != null) {
+            oldStudent.setRegistration(newStudent.getRegistration());
+        }
     }
 
     @Transactional
     @Override
     public void deleteProfessor(Long professorId) {
-        professorService.deleteProfessor(professorId);
+        Professor professor = professorService.findProfessorById(professorId);
+        professorService.deleteProfessor(professor);
+        tccMatchUserService.deleteUser(professor);
     }
 
     @Transactional
     @Override
     public void deleteStudyArea(Long studyAreaId) {
-        studyAreaService.deleteStudyArea(studyAreaId);
+        StudyArea studyArea = studyAreaService.findStudyAreaById(studyAreaId);
+        studyAreaService.deleteStudyArea(studyArea);
+    }
+
+    @Transactional
+    @Override
+    public void deleteStudent(Long studentId) {
+        Student student = studentService.findStudentById(studentId);
+        studentService.deleteStudent(student);
+        tccMatchUserService.deleteUser(student);
     }
 
     @Transactional
     @Override
     public void registerTCC(TCCOrientationDTO tccOrientationDTO) {
-        Student student = studentService.findById(tccOrientationDTO.getStudentId());
+        Student student = studentService.findStudentById(tccOrientationDTO.getStudentId());
         TCC tcc = tccService.findTCCById(tccOrientationDTO.getTccId());
+        Professor advisor = tcc.getAdvisor();
 
-        if (tcc.getTccStatus().equals(TCCStatus.PENDING)) {
-            throw new PendingTCCException(tccOrientationDTO.getTccId());
-        }
+        this.validateTCCRegistration(tcc);
 
         student.setTcc(tcc);
         tcc.setAdvisedStudent(student);
         tcc.setTccStatus(TCCStatus.ON_GOING);
         tcc.setTerm(tccOrientationDTO.getTerm());
 
+        professorService.saveProfessor(advisor);
         studentService.saveStudent(student);
         tccService.saveTCC(tcc);
+    }
+
+    private void validateTCCRegistration(TCC tcc) {
+        Professor advisor = tcc.getAdvisor();
+
+        if (!advisor.isAvailable()) throw new RuntimeException("quota abaixo de 0");
+
+        if (tcc.getTccStatus().equals(TCCStatus.PENDING)) {
+            throw new PendingTCCException(tcc.getId());
+        }
     }
 
     @Override
@@ -133,5 +233,18 @@ public class AdminServiceImpl implements AdminService {
         Pattern pattern1900 = Pattern.compile("19\\d{2}\\.[1-2]");
 
         if (!(pattern2000.matcher(term).find() || pattern1900.matcher(term).find())) throw new InvalidTermException(term);
+    }
+
+    private Professor buildProfessor(ProfessorDTO professorDTO) {
+        String encryptedPassword = passwordEncoder.encode(professorDTO.getPassword());
+        return new Professor(professorDTO.getFullName(), professorDTO.getEmail(), professorDTO.getUsername(), encryptedPassword, professorDTO.getLabs(), professorDTO.getQuota());
+    }
+
+    private Student buildStudent(StudentDTO studentDTO) {
+        return new Student(studentDTO.getFullName(), studentDTO.getRegistration(), studentDTO.getEmail(), studentDTO.getExpectedConclusionTerm(), studentDTO.getUsername(), passwordEncoder.encode(studentDTO.getPassword()));
+    }
+
+    private StudyArea buildStudyArea(StudyAreaDTO studyAreaDTO){
+        return new StudyArea(studyAreaDTO.getDescription());
     }
 }

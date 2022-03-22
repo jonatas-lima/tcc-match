@@ -1,12 +1,13 @@
 package com.psoft.match.tcc.controller;
 
 import com.psoft.match.tcc.dto.ProfessorDTO;
+import com.psoft.match.tcc.dto.StudentDTO;
 import com.psoft.match.tcc.dto.StudyAreaDTO;
 import com.psoft.match.tcc.dto.TCCOrientationDTO;
 import com.psoft.match.tcc.model.StudyArea;
 import com.psoft.match.tcc.model.tcc.TCC;
-import com.psoft.match.tcc.model.tcc.TCCStatus;
 import com.psoft.match.tcc.model.user.Professor;
+import com.psoft.match.tcc.model.user.Student;
 import com.psoft.match.tcc.response.TCCSummaryResponse;
 import com.psoft.match.tcc.service.user.AdminService;
 import com.psoft.match.tcc.util.Constants;
@@ -50,6 +51,27 @@ public class AdminApiController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+    @PostMapping("/student")
+    @ApiOperation(value = "Cria um novo estudante no sistema")
+    public ResponseEntity<Student> createStudent(@RequestBody StudentDTO studentDTO) {
+        Student student = adminService.createStudent(studentDTO);
+        return new ResponseEntity<>(student, HttpStatus.CREATED);
+    }
+
+    @PutMapping("/student/{id}")
+    @ApiOperation(value = "Atualiza as informações de um estudante do sistema")
+    public ResponseEntity<Student> updateStudent(@PathVariable Long id, @RequestBody StudentDTO studentDTO) {
+        Student updatedStudent = adminService.updateStudent(id, studentDTO);
+        return new ResponseEntity<>(updatedStudent, HttpStatus.NO_CONTENT);
+    }
+
+    @DeleteMapping("/student/{id}")
+    @ApiOperation(value = "Remove um estudante do sistema")
+    public ResponseEntity<Void> deleteStudent(@PathVariable Long id) {
+        adminService.deleteStudent(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
     @PostMapping(value = "/study-area")
     @ApiOperation(value = "Criação de uma nova área de estudo")
     public ResponseEntity<StudyArea> createStudyArea(@RequestBody StudyAreaDTO studyAreaDTO) {
@@ -78,7 +100,8 @@ public class AdminApiController {
         return new ResponseEntity<>(tccs, HttpStatus.OK);
     }
 
-    @PostMapping("/tcc/student/")
+    @PostMapping("/tcc")
+    @ApiOperation(value = "Aprova um TCC previamente cadastrado no sistema")
     public ResponseEntity<Void> registerTCC(@RequestBody TCCOrientationDTO tccOrientationDTO) {
         adminService.registerTCC(tccOrientationDTO);
         return new ResponseEntity<>(HttpStatus.CREATED);

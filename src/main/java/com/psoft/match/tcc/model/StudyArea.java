@@ -108,4 +108,11 @@ public class StudyArea {
     public int hashCode() {
         return Objects.hash(id);
     }
+
+    @PreRemove
+    private void preRemove() {
+        this.tccs.forEach(tcc -> tcc.removeStudyArea(this));
+        this.interestedProfessors.forEach(professor -> professor.removeInterestedStudyArea(this));
+        this.interestedStudents.forEach(student -> student.removeInterestedArea(this));
+    }
 }

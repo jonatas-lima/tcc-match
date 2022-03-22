@@ -26,13 +26,13 @@ public class TCC {
 
     private String term;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Student advisedStudent;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Professor advisor;
 
-//    @JsonIgnore
+    @JsonIgnore
     @ManyToMany
     @JoinTable(
             joinColumns = @JoinColumn(name = "tcc_id"),
@@ -41,19 +41,11 @@ public class TCC {
     private Collection<StudyArea> studyAreas;
 
     @JsonIgnore
-    @ManyToMany
-    @JoinTable(
-            joinColumns = @JoinColumn(name = "tcc_id"),
-            inverseJoinColumns = @JoinColumn(name = "student_id")
-    )
+    @ManyToMany(mappedBy = "orientationInterests")
     private Collection<Student> interestedStudents;
 
     @JsonIgnore
-    @ManyToMany
-    @JoinTable(
-            joinColumns = @JoinColumn(name = "tcc_id"),
-            inverseJoinColumns = @JoinColumn(name = "professor_id")
-    )
+    @ManyToMany(mappedBy = "interestedTCCs")
     private Collection<Professor> interestedProfessors;
 
     private TCCStatus tccStatus;
