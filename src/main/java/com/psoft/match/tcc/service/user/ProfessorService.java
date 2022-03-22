@@ -18,15 +18,13 @@ public interface ProfessorService  {
 
     Professor findProfessorById(Long id);
 
-    Professor createProfessor(ProfessorDTO professorDTO);
-
-    Professor updateProfessor(Long id, ProfessorDTO professorDTO);
+    Professor saveProfessor(Professor professor);
 
     void approveOrientationInterest(Long tccId, Long studentId);
 
     void refuseOrientationInterest(Long tccId, Long studentId);
 
-    void deleteProfessor(Long id);
+    void deleteProfessor(Professor professor);
 
     void declareOrientationInterest(Long tccProposalId);
 

@@ -1,11 +1,9 @@
 package com.psoft.match.tcc.service.study_area;
 
-import com.psoft.match.tcc.dto.StudyAreaDTO;
 import com.psoft.match.tcc.model.StudyArea;
 import com.psoft.match.tcc.model.tcc.TCC;
 import com.psoft.match.tcc.repository.StudyAreaRepository;
 import com.psoft.match.tcc.service.email.EmailService;
-import com.psoft.match.tcc.util.exception.studyarea.StudyAreaAlreadyExistsException;
 import com.psoft.match.tcc.util.exception.studyarea.StudyAreaNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,6 +11,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class StudyAreaServiceImpl implements StudyAreaService {
@@ -22,27 +21,6 @@ public class StudyAreaServiceImpl implements StudyAreaService {
 
     @Autowired
     private EmailService emailService;
-
-    @Transactional
-    @Override
-    public StudyArea createStudyArea(StudyAreaDTO studyAreaDTO){
-        StudyArea studyArea = studyAreaRepository.findByDescription(studyAreaDTO.getDescription()).orElse(null);
-        if (studyArea != null) {
-            throw new StudyAreaAlreadyExistsException(studyAreaDTO.getDescription());
-        }
-
-        StudyArea newStudyArea = this.buildStudyArea(studyAreaDTO);
-        return studyAreaRepository.save(newStudyArea);
-    }
-
-    @Transactional
-    @Override
-    public StudyArea updateStudyArea(Long id, StudyAreaDTO studyAreaDTO){
-        StudyArea studyArea = this.findStudyAreaById(id);
-        this.updateStudyArea(studyArea, studyAreaDTO);
-
-        return studyAreaRepository.save(studyArea);
-    }
 
     @Transactional
     @Override
@@ -67,21 +45,17 @@ public class StudyAreaServiceImpl implements StudyAreaService {
 
     @Transactional
     @Override
-    public void deleteStudyArea(Long id){
-       StudyArea studyArea = this.findStudyAreaById(id);
+    public void deleteStudyArea(StudyArea studyArea){
        studyAreaRepository.delete(studyArea);
    }
-
-    private StudyArea buildStudyArea(StudyAreaDTO studyAreaDTO){
-        return new StudyArea(studyAreaDTO.getDescription());
-    }
 
     @Override
     public StudyArea findStudyAreaById(Long id) {
         return studyAreaRepository.findById(id).orElseThrow(() -> new StudyAreaNotFoundException(id));
     }
 
-    private void updateStudyArea(StudyArea oldStudyArea, StudyAreaDTO newStudyArea){
-        oldStudyArea.setDescription(newStudyArea.getDescription());
+    @Override
+    public Optional<StudyArea> findStudyAreaByDescriptionOpt(String description) {
+        return studyAreaRepository.findByDescription(description);
     }
 }

@@ -2,7 +2,6 @@ package com.psoft.match.tcc.model.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.psoft.match.tcc.model.StudyArea;
-import com.psoft.match.tcc.model.tcc.OrientationIssue;
 import com.psoft.match.tcc.model.tcc.TCC;
 
 import javax.persistence.*;
@@ -17,13 +16,9 @@ public class Student extends TCCMatchUser {
     private String expectedConclusionTerm;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "user")
-    private Set<OrientationIssue> orientationIssues;
-
-    @JsonIgnore
     @ManyToMany
     @JoinTable(
-            joinColumns = @JoinColumn(name = "interested_student_id"),
+            joinColumns = @JoinColumn(name = "student_id"),
             inverseJoinColumns = @JoinColumn(name = "tcc_id")
     )
     private Set<TCC> orientationInterests;
@@ -105,7 +100,9 @@ public class Student extends TCCMatchUser {
         this.tcc = tcc;
     }
 
-    public void notifyNewTCC(String studyAreaDescription) {
-        System.out.printf("%s : Novo TCC cadastrado na área %s\n", getFullName(), studyAreaDescription);
+    @PreRemove
+    private void preRemove() {
+        if (this.tcc != null) this.tcc.setAdvisedStudent(null);
+        this.tccProposals.forEach(tcc -> tcc.setAdvisedStudent(null));
     }
 }

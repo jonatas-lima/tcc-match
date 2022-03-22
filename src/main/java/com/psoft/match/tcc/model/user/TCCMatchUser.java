@@ -31,7 +31,7 @@ public abstract class TCCMatchUser {
     private Collection<String> emails;
 
     @JsonIgnore
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     private Set<OrientationIssue> orientationIssues;
 
     public TCCMatchUser() {}

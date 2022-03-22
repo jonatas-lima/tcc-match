@@ -7,15 +7,15 @@ import com.psoft.match.tcc.model.StudyArea;
 import com.psoft.match.tcc.model.tcc.TCC;
 import com.psoft.match.tcc.model.user.Professor;
 import com.psoft.match.tcc.model.user.Student;
-import com.psoft.match.tcc.model.user.TCCMatchUser;
 import com.psoft.match.tcc.repository.user.ProfessorRepository;
 import com.psoft.match.tcc.service.study_area.StudyAreaService;
 import com.psoft.match.tcc.service.tcc.TCCService;
-import com.psoft.match.tcc.util.exception.professor.*;
+import com.psoft.match.tcc.util.exception.professor.InvalidQuotaException;
+import com.psoft.match.tcc.util.exception.professor.ProfessorAlreadyInterestedInStudyAreaException;
+import com.psoft.match.tcc.util.exception.professor.ProfessorNotFoundException;
+import com.psoft.match.tcc.util.exception.professor.TCCDoesNotBelongToProfessorException;
 import com.psoft.match.tcc.util.exception.student.StudentDoesNotHaveOrientationInterestException;
-import com.psoft.match.tcc.util.exception.user.UserAlreadyExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -37,9 +37,6 @@ public class ProfessorServiceImpl implements ProfessorService {
     private TCCMatchUserService tccMatchUserService;
 
     @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    @Autowired
     private TCCService tccService;
 
     @Autowired
@@ -58,17 +55,8 @@ public class ProfessorServiceImpl implements ProfessorService {
     public List<Professor> getAvailableProfessorsWithSharedInterests(Student student) {
         return this.getAvailableProfessors()
                 .stream()
-                .filter(professor -> this.hasSharedInterest(professor, student))
+                .filter(professor -> professor.hasSharedInterestedWith(student))
                 .collect(Collectors.toList());
-    }
-
-    private boolean hasSharedInterest(Professor professor, Student student) {
-        for(StudyArea s : student.getInterestedStudyAreas()) {
-            if (professor.getInterestedStudyAreas().contains(s)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     @Override
@@ -78,22 +66,7 @@ public class ProfessorServiceImpl implements ProfessorService {
 
     @Transactional
     @Override
-    public Professor createProfessor(ProfessorDTO professorDTO) {
-        TCCMatchUser user = tccMatchUserService.findByEmailOpt(professorDTO.getEmail()).orElse(null);
-        if (user != null) throw new UserAlreadyExistsException(professorDTO.getEmail());
-
-        Professor professor = this.buildProfessor(professorDTO);
-        tccMatchUserService.saveUser(professor);
-        return professorRepository.save(professor);
-    }
-
-    @Transactional
-    @Override
-    public Professor updateProfessor(Long id, ProfessorDTO professorDTO) {
-        Professor professor = this.findProfessorById(id);
-        this.updateProfessor(professor, professorDTO);
-
-        tccMatchUserService.saveUser(professor);
+    public Professor saveProfessor(Professor professor) {
         return professorRepository.save(professor);
     }
 
@@ -101,7 +74,7 @@ public class ProfessorServiceImpl implements ProfessorService {
     @Override
     public void approveOrientationInterest(Long tccId, Long studentId) {
         Professor professor = tccMatchUserService.getLoggedUser();
-        Student student = studentService.findById(studentId);
+        Student student = studentService.findStudentById(studentId);
         TCC tcc = tccService.findTCCById(tccId);
 
         this.validateOrientation(professor, tcc, student);
@@ -117,7 +90,7 @@ public class ProfessorServiceImpl implements ProfessorService {
     @Override
     public void refuseOrientationInterest(Long tccId, Long studentId) {
         Professor professor = tccMatchUserService.getLoggedUser();
-        Student student = studentService.findById(studentId);
+        Student student = studentService.findStudentById(studentId);
         TCC tcc = tccService.findTCCById(tccId);
 
         this.validateOrientation(professor, tcc, student);
@@ -136,9 +109,7 @@ public class ProfessorServiceImpl implements ProfessorService {
 
     @Transactional
     @Override
-    public void deleteProfessor(Long id) {
-        Professor professor = this.findProfessorById(id);
-        tccMatchUserService.deleteUser(professor);
+    public void deleteProfessor(Professor professor) {
         professorRepository.delete(professor);
     }
 
@@ -225,25 +196,11 @@ public class ProfessorServiceImpl implements ProfessorService {
 
         TCC tcc = tccService.createTCC(tccdto, professor);
         professor.registerTCC(tcc);
-        professor.decrementQuota();
 
         professorRepository.save(professor);
         studyAreaService.notifyNewTCCToInterestedStudents(studyAreas, tcc);
 
         return tcc;
-    }
-
-
-
-    private Professor buildProfessor(ProfessorDTO professorDTO) {
-        String encryptedPassword = passwordEncoder.encode(professorDTO.getPassword());
-        return new Professor(professorDTO.getFullName(), professorDTO.getEmail(), professorDTO.getUsername(), encryptedPassword, professorDTO.getLabs(), professorDTO.getQuota());
-    }
-
-    private void updateProfessor(Professor oldProfessor, ProfessorDTO newProfessor) {
-        oldProfessor.setEmail(newProfessor.getEmail());
-        oldProfessor.setUsername(newProfessor.getUsername());
-        oldProfessor.setFullName(newProfessor.getFullName());
     }
 
 	@Override
