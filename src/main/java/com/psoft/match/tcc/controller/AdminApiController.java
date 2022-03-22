@@ -8,6 +8,7 @@ import com.psoft.match.tcc.model.StudyArea;
 import com.psoft.match.tcc.model.tcc.TCC;
 import com.psoft.match.tcc.model.user.Professor;
 import com.psoft.match.tcc.model.user.Student;
+import com.psoft.match.tcc.response.OrientationIssuesSummaryResponse;
 import com.psoft.match.tcc.response.TCCSummaryResponse;
 import com.psoft.match.tcc.service.user.AdminService;
 import com.psoft.match.tcc.util.Constants;
@@ -108,14 +109,23 @@ public class AdminApiController {
     }
 
     @GetMapping("/tcc/summary")
+    @ApiOperation(value = "Retorna um sumário dos TCCs de um determinado período")
     public ResponseEntity<TCCSummaryResponse> getTCCSummary(@RequestParam String term) {
         TCCSummaryResponse tccSummary = adminService.getTCCSummary(term);
         return new ResponseEntity<>(tccSummary, HttpStatus.OK);
     }
 
     @PutMapping("/tcc/{tccId}/finalize")
+    @ApiOperation(value = "Finaliza um TCC")
     public ResponseEntity<Void> finalizeTCC(@PathVariable Long tccId, @RequestParam String term){
         adminService.finalizeTCC(tccId, term);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @GetMapping("/issue/summary")
+    @ApiOperation(value = "Retorna um sumário dos problemas de orientação dos TCCs de um determinado periodo")
+    public ResponseEntity<OrientationIssuesSummaryResponse> getOrientationIssues(@RequestParam String term) {
+        OrientationIssuesSummaryResponse orientationIssuesSummary = adminService.getOrientationIssues(term);
+        return new ResponseEntity<>(orientationIssuesSummary, HttpStatus.OK);
     }
 }
