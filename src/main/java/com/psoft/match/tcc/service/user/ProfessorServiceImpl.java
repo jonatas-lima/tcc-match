@@ -8,6 +8,7 @@ import com.psoft.match.tcc.model.tcc.TCC;
 import com.psoft.match.tcc.model.user.Professor;
 import com.psoft.match.tcc.model.user.Student;
 import com.psoft.match.tcc.repository.user.ProfessorRepository;
+import com.psoft.match.tcc.service.email.EmailService;
 import com.psoft.match.tcc.service.study_area.StudyAreaService;
 import com.psoft.match.tcc.service.tcc.TCCService;
 import com.psoft.match.tcc.util.exception.professor.InvalidQuotaException;
@@ -41,6 +42,9 @@ public class ProfessorServiceImpl implements ProfessorService {
 
     @Autowired
     private StudyAreaService studyAreaService;
+
+    @Autowired
+    private EmailService emailService;
 
     @Override
     public List<Professor> getAvailableProfessors() {
@@ -83,6 +87,8 @@ public class ProfessorServiceImpl implements ProfessorService {
         tcc.setAdvisedStudent(student);
         tcc.setAdvisor(professor);
 
+        emailService.notifyApprovedOrientationToAdmin(tcc);
+
         tccService.saveTCC(tcc);
     }
 
@@ -121,6 +127,8 @@ public class ProfessorServiceImpl implements ProfessorService {
 
         professor.addOrientationInterest(tcc);
         tcc.addOrientationInterest(professor);
+
+        emailService.notifyNewOrientationInterestToStudent(tcc.getAdvisedStudent(), professor, tcc);
 
         tccService.saveTCC(tcc);
         professorRepository.save(professor);
