@@ -11,6 +11,6 @@ public interface SystemConfig {
 
     DBService dbService();
 
-    MailSender mailSender();
+//    MailSender mailSender();
 
 }

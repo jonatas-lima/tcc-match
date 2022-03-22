@@ -63,6 +63,7 @@ public class StudentServiceImpl implements StudentService {
         interestedTcc.addOrientationInterest(student);
 
         emailService.notifyNewOrientationInterestToProfessor(interestedTcc.getAdvisor(), student, interestedTcc);
+
         tccService.saveTCC(interestedTcc);
         studentRepository.save(student);
     }

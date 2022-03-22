@@ -4,6 +4,7 @@ import com.psoft.match.tcc.service.db.DBService;
 import com.psoft.match.tcc.service.db.TestDBService;
 import com.psoft.match.tcc.service.email.EmailService;
 import com.psoft.match.tcc.service.email.FakeEmailService;
+import com.psoft.match.tcc.service.email.SmtpEmailService;
 import org.springframework.boot.autoconfigure.flyway.FlywayMigrationStrategy;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,7 +30,7 @@ public class DevConfig implements SystemConfig {
     @Bean
     @Override
     public EmailService emailService() {
-        return new FakeEmailService();
+        return new SmtpEmailService();
     }
 
     @Bean
@@ -38,9 +39,9 @@ public class DevConfig implements SystemConfig {
         return new TestDBService();
     }
 
-    @Bean
-    @Override
-    public MailSender mailSender() {
-        return new JavaMailSenderImpl();
-    }
+//    @Bean
+//    @Override
+//    public MailSender mailSender() {
+//        return new JavaMailSenderImpl();
+//    }
 }

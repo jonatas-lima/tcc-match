@@ -17,6 +17,10 @@ COPY --from=BUILD /root/target/match.tcc-0.0.1-SNAPSHOT.jar .
 
 ENV PROFILE=dev
 
+ENV SMTP_USER=ferreiradelimajonatas@gmail.com
+
+ENV SMTP_PASSWORD=123
+
 EXPOSE 8080
 
 ENTRYPOINT ["java", "-Dspring.profiles.active=${PROFILE}", "-jar", "match.tcc-0.0.1-SNAPSHOT.jar"]
