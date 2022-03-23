@@ -2,6 +2,7 @@ package com.psoft.match.tcc.service.db;
 
 import com.psoft.match.tcc.model.StudyArea;
 import com.psoft.match.tcc.model.tcc.TCC;
+import com.psoft.match.tcc.model.tcc.TCCStatus;
 import com.psoft.match.tcc.model.user.Admin;
 import com.psoft.match.tcc.model.user.Professor;
 import com.psoft.match.tcc.model.user.Student;
@@ -161,6 +162,7 @@ public class TestDBService implements DBService {
         student1.setTcc(tcc1);
         tcc1.setAdvisedStudent(student1);
         tcc1.setTerm("2020.1");
+        tcc1.setTccStatus(TCCStatus.ON_GOING);
 
         tccRepository.saveAll(tccs);
     }

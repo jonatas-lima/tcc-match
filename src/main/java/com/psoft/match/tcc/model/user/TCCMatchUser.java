@@ -27,6 +27,7 @@ public abstract class TCCMatchUser {
     @JsonIgnore
     private UserRole role;
 
+    @JsonIgnore
     @ElementCollection
     private Collection<String> emails;
 

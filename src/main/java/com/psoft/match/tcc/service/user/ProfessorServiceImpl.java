@@ -1,7 +1,6 @@
 package com.psoft.match.tcc.service.user;
 
 import com.psoft.match.tcc.dto.OrientationIssueDTO;
-import com.psoft.match.tcc.dto.ProfessorDTO;
 import com.psoft.match.tcc.dto.TCCDTO;
 import com.psoft.match.tcc.model.StudyArea;
 import com.psoft.match.tcc.model.tcc.TCC;
@@ -11,6 +10,7 @@ import com.psoft.match.tcc.repository.user.ProfessorRepository;
 import com.psoft.match.tcc.service.email.EmailService;
 import com.psoft.match.tcc.service.study_area.StudyAreaService;
 import com.psoft.match.tcc.service.tcc.TCCService;
+import com.psoft.match.tcc.service.tcc.orientation.OrientationIssueService;
 import com.psoft.match.tcc.util.exception.professor.InvalidQuotaException;
 import com.psoft.match.tcc.util.exception.professor.ProfessorAlreadyInterestedInStudyAreaException;
 import com.psoft.match.tcc.util.exception.professor.ProfessorNotFoundException;
@@ -45,6 +45,9 @@ public class ProfessorServiceImpl implements ProfessorService {
 
     @Autowired
     private EmailService emailService;
+
+    @Autowired
+    private OrientationIssueService orientationIssueService;
 
     @Override
     public List<Professor> getAvailableProfessors() {
@@ -173,10 +176,7 @@ public class ProfessorServiceImpl implements ProfessorService {
         Professor professor = tccMatchUserService.getLoggedUser();
         TCC tcc = tccService.findTCCById(tccId);
 
-        if (professor.getRegisteredTCCs().contains(tcc)) throw new TCCDoesNotBelongToProfessorException(tccId, professor.getFullName());
-
-        tccMatchUserService.registerOrientationIssue(professor, tcc, orientationIssueDTO);
-
+        orientationIssueService.registerOrientationIssue(professor, tcc, orientationIssueDTO);
         professorRepository.save(professor);
     }
 

@@ -76,8 +76,12 @@ public class Professor extends TCCMatchUser {
         return interestedTCCs;
     }
 
-    public Collection<TCC> getTCCOrientations() {
-        return this.registeredTCCs.stream().filter(tcc -> tcc.getTccStatus().equals(TCCStatus.ON_GOING)).collect(Collectors.toList());
+    @JsonIgnore
+    public Collection<TCC> getOnGoingTCCs() {
+        return this.registeredTCCs
+                .stream()
+                .filter(tcc -> tcc.getTccStatus().equals(TCCStatus.ON_GOING))
+                .collect(Collectors.toList());
     }
 
     public boolean addOrientationInterest(TCC orientationInterest) {
@@ -109,7 +113,7 @@ public class Professor extends TCCMatchUser {
     }
 
     public boolean isAvailable() {
-        return this.getTCCOrientations().size() < this.quota;
+        return this.getOnGoingTCCs().size() < this.quota;
     }
 
     public boolean hasSharedInterestedWith(Student student) {

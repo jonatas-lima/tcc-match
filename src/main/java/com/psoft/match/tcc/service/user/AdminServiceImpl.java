@@ -26,7 +26,6 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.Collection;
 import java.util.List;
-import java.util.function.Function;
 import java.util.regex.Pattern;
 
 @Service
@@ -182,6 +181,7 @@ public class AdminServiceImpl implements AdminService {
         TCC tcc = tccService.findTCCById(tccOrientationDTO.getTccId());
         Professor advisor = tcc.getAdvisor();
 
+        this.validateTerm(tccOrientationDTO.getTerm());
         this.validateTCCRegistration(tcc);
 
         student.setTcc(tcc);
