@@ -5,16 +5,16 @@ import com.psoft.match.tcc.dto.StudentDTO;
 import com.psoft.match.tcc.dto.StudyAreaDTO;
 import com.psoft.match.tcc.dto.TCCOrientationDTO;
 import com.psoft.match.tcc.model.StudyArea;
+import com.psoft.match.tcc.model.tcc.OrientationIssue;
 import com.psoft.match.tcc.model.tcc.TCC;
 import com.psoft.match.tcc.model.tcc.TCCStatus;
-import com.psoft.match.tcc.model.user.Admin;
-import com.psoft.match.tcc.model.user.Professor;
-import com.psoft.match.tcc.model.user.Student;
-import com.psoft.match.tcc.model.user.TCCMatchUser;
+import com.psoft.match.tcc.model.user.*;
 import com.psoft.match.tcc.repository.user.AdminRepository;
+import com.psoft.match.tcc.response.OrientationIssuesSummaryResponse;
 import com.psoft.match.tcc.response.TCCSummaryResponse;
 import com.psoft.match.tcc.service.study_area.StudyAreaService;
 import com.psoft.match.tcc.service.tcc.TCCService;
+import com.psoft.match.tcc.service.tcc.orientation.OrientationIssueService;
 import com.psoft.match.tcc.util.exception.studyarea.StudyAreaAlreadyExistsException;
 import com.psoft.match.tcc.util.exception.tcc.InvalidTermException;
 import com.psoft.match.tcc.util.exception.tcc.PendingTCCException;
@@ -26,7 +26,6 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.Collection;
 import java.util.List;
-import java.util.function.Function;
 import java.util.regex.Pattern;
 
 @Service
@@ -49,6 +48,9 @@ public class AdminServiceImpl implements AdminService {
 
     @Autowired
     private TCCService tccService;
+
+    @Autowired
+    private OrientationIssueService orientationIssueService;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -179,6 +181,7 @@ public class AdminServiceImpl implements AdminService {
         TCC tcc = tccService.findTCCById(tccOrientationDTO.getTccId());
         Professor advisor = tcc.getAdvisor();
 
+        this.validateTerm(tccOrientationDTO.getTerm());
         this.validateTCCRegistration(tcc);
 
         student.setTcc(tcc);
@@ -202,6 +205,17 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
+    public void finalizeTCC(Long tccId, String term) {
+        this.validateTerm(term);
+
+        TCC tcc = tccService.findTCCById(tccId);
+
+        tcc.setTerm(term);
+        tcc.finalizeTCC();
+        tccService.saveTCC(tcc);
+    }
+
+    @Override
     public TCCSummaryResponse getTCCSummary(String term) {
         this.validateTerm(term);
 
@@ -215,6 +229,14 @@ public class AdminServiceImpl implements AdminService {
     public List<TCC> getTCCs(String tccStatus, String term) {
         TCCStatus status = TCCStatus.fromText(tccStatus);
         return tccService.getTCCsByStatusAndTerm(status, term);
+    }
+
+    @Override
+    public OrientationIssuesSummaryResponse getOrientationIssues(String term) {
+        Collection<OrientationIssue> studentIssues = orientationIssueService.getOrientationIssues(term, UserRole.STUDENT);
+        Collection<OrientationIssue> professorIssues = orientationIssueService.getOrientationIssues(term, UserRole.PROFESSOR);
+
+        return new OrientationIssuesSummaryResponse(studentIssues, professorIssues, term);
     }
 
     private void validateTerm(String term) {

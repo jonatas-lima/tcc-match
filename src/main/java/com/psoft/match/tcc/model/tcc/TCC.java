@@ -26,10 +26,10 @@ public class TCC {
 
     private String term;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     private Student advisedStudent;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     private Professor advisor;
 
     @JsonIgnore
@@ -186,6 +186,11 @@ public class TCC {
         this.tccStatus = TCCStatus.ON_GOING;
     }
 
+    public void finalizeTCC() {
+        this.tccStatus = TCCStatus.FINISHED;
+    }
+
+    @JsonIgnore
     public boolean isCreatedByStudent() {
         return this.advisedStudent != null && advisor == null;
     }

@@ -9,6 +9,7 @@ import com.psoft.match.tcc.model.tcc.TCC;
 import com.psoft.match.tcc.model.user.Admin;
 import com.psoft.match.tcc.model.user.Professor;
 import com.psoft.match.tcc.model.user.Student;
+import com.psoft.match.tcc.response.OrientationIssuesSummaryResponse;
 import com.psoft.match.tcc.response.TCCSummaryResponse;
 
 import java.util.List;
@@ -37,7 +38,11 @@ public interface AdminService {
 
     void registerTCC(TCCOrientationDTO tccOrientationDTO);
 
+    void finalizeTCC(Long tccId, String term);
+
     TCCSummaryResponse getTCCSummary(String term);
 
     List<TCC> getTCCs(String tccStatus, String term);
+
+    OrientationIssuesSummaryResponse getOrientationIssues(String term);
 }
