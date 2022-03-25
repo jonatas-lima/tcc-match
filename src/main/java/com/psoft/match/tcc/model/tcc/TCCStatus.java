@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import com.psoft.match.tcc.util.exception.tcc.InvalidTCCStatusException;
 
 public enum TCCStatus {
-    PENDING("PENDING"),
+    PENDING_APPROVAL("PENDING_APPROVAL"),
     APPROVED("APPROVED"),
     ON_GOING("ON_GOING"),
     FINISHED("FINISHED");

@@ -12,9 +12,9 @@ public interface TCCService {
 
     List<TCC> getAllTccs();
 
-    TCC findTCCById(Long id);
+    List<TCC> getProfessorsTCCs();
 
-    List<TCC> findAvailableTCCs();
+    TCC findTCCById(Long id);
 
     List<TCC> getTCCsByStatusAndTerm(TCCStatus tccStatus, String term);
 

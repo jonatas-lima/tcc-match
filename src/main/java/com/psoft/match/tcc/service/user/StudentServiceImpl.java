@@ -3,6 +3,7 @@ package com.psoft.match.tcc.service.user;
 import com.psoft.match.tcc.dto.OrientationIssueDTO;
 import com.psoft.match.tcc.dto.TCCDTO;
 import com.psoft.match.tcc.model.StudyArea;
+import com.psoft.match.tcc.model.tcc.OrientationIssue;
 import com.psoft.match.tcc.model.tcc.TCC;
 import com.psoft.match.tcc.model.user.Professor;
 import com.psoft.match.tcc.model.user.Student;
@@ -10,8 +11,12 @@ import com.psoft.match.tcc.repository.user.StudentRepository;
 import com.psoft.match.tcc.service.email.EmailService;
 import com.psoft.match.tcc.service.study_area.StudyAreaService;
 import com.psoft.match.tcc.service.tcc.TCCService;
+import com.psoft.match.tcc.service.tcc.orientation.OrientationIssueService;
 import com.psoft.match.tcc.util.exception.student.StudentNotFoundException;
+import com.psoft.match.tcc.util.exception.tcc.TCCRegisteredByStudentException;
 import com.psoft.match.tcc.util.exception.tcc.UnavailableTCCException;
+import com.psoft.match.tcc.util.exception.user.UserAlreadyInterestedInStudyAreaException;
+import com.psoft.match.tcc.util.exception.user.UserAlreadyInterestedInTCCException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -34,38 +39,45 @@ public class StudentServiceImpl implements StudentService {
     private ProfessorService professorService;
 
     @Autowired
-    private TCCMatchUserService tccMatchUserService;
+    private TCCMatchUserService<Student> tccMatchUserService;
+
+    @Autowired
+    private OrientationIssueService orientationIssueService;
 
     @Autowired
     private EmailService emailService;
 
     @Transactional
     @Override
-    public void registerOrientationIssue(OrientationIssueDTO orientationIssueDTO) {
-        Student student = tccMatchUserService.getLoggedUser();
+    public OrientationIssue registerTCCOrientationIssue(OrientationIssueDTO orientationIssueDTO) {
+        Student student = tccMatchUserService.getLoggedUser(Student.class);
         TCC tcc = student.getTcc();
 
-        tccMatchUserService.registerOrientationIssue(student, tcc, orientationIssueDTO);
         studentRepository.save(student);
+        return orientationIssueService.registerOrientationIssue(student, tcc, orientationIssueDTO);
     }
 
     @Transactional
     @Override
-    public void declareTccOrientationInterest(Long tccId) {
-        Student student = tccMatchUserService.getLoggedUser();
+    public void declareTCCOrientationInterest(Long tccId) {
+        Student student = tccMatchUserService.getLoggedUser(Student.class);
         TCC interestedTcc = tccService.findTCCById(tccId);
 
-        if (!interestedTcc.isAvailable()) {
-            throw new UnavailableTCCException(tccId);
-        }
+        this.validateTCCOrientationRequest(student, interestedTcc);
 
         student.addOrientationInterest(interestedTcc);
-        interestedTcc.addOrientationInterest(student);
+        interestedTcc.addInterestedStudent(student);
 
-        emailService.notifyNewOrientationInterestToProfessor(interestedTcc.getAdvisor(), student, interestedTcc);
+        emailService.notifyNewOrientationInterestToUser(interestedTcc.getAuthor(), student, interestedTcc);
 
         tccService.saveTCC(interestedTcc);
         studentRepository.save(student);
+    }
+
+    private void validateTCCOrientationRequest(Student student, TCC interestedTCC) {
+        if (!interestedTCC.isAvailable()) throw new UnavailableTCCException(interestedTCC.getId());
+        if (!interestedTCC.isCreatedByProfessor()) throw new TCCRegisteredByStudentException(interestedTCC.getId());
+        if (interestedTCC.getInterestedStudents().contains(student)) throw new UserAlreadyInterestedInTCCException(student.getFullName(), interestedTCC.getTitle());
     }
 
     @Override
@@ -88,7 +100,9 @@ public class StudentServiceImpl implements StudentService {
     @Override
 	public StudyArea addInterestedStudyArea(Long idStudyArea) {
 		StudyArea studyArea = studyAreaService.findStudyAreaById(idStudyArea);
-        Student student = tccMatchUserService.getLoggedUser();
+        Student student = tccMatchUserService.getLoggedUser(Student.class);
+
+        if (student.getInterestedStudyAreas().contains(studyArea)) throw new UserAlreadyInterestedInStudyAreaException(student.getFullName(), studyArea.getDescription());
 
 		student.addInterestedArea(studyArea);
 		studyArea.addInterestedStudent(student);
@@ -99,20 +113,20 @@ public class StudentServiceImpl implements StudentService {
 	}
 
 	@Override
-	public List<Professor> listInterestedProfessors() {
-		Student student = tccMatchUserService.getLoggedUser();
+	public List<Professor> getProfessorsWithSharedInterests() {
+		Student student = tccMatchUserService.getLoggedUser(Student.class);
 		return professorService.getAvailableProfessorsWithSharedInterests(student);
 	}
 
     @Transactional
 	@Override
-	public TCC createTCC(TCCDTO tcc) {
-        Student student = tccMatchUserService.getLoggedUser();
+	public TCC createStudentTCC(TCCDTO tcc) {
+        Student student = tccMatchUserService.getLoggedUser(Student.class);
 		return tccService.createTCC(tcc, student);
 	}
 
 	@Override
-	public List<TCC> listTccs() {
-		return tccService.getAllTccs();
+	public List<TCC> getProfessorRegisteredTCCs() {
+		return tccService.getProfessorsTCCs();
 	}
 }

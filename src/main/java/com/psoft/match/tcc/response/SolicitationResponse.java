@@ -1,26 +1,38 @@
 package com.psoft.match.tcc.response;
 
+import com.psoft.match.tcc.model.StudyArea;
 import com.psoft.match.tcc.model.tcc.TCC;
 import com.psoft.match.tcc.model.user.Student;
 
 import java.util.Collection;
 
 public class SolicitationResponse {
-    private TCC tcc;
+
+    private String tccTitle;
+
+    private String tccDescription;
+
+    private Collection<StudyArea> studyAreas;
 
     private Collection<Student> interestedStudents;
 
     public SolicitationResponse(TCC tcc) {
-        this.tcc = tcc;
+        this.tccTitle = tcc.getTitle();
+        this.tccDescription = tcc.getDescription();
+        this.studyAreas = tcc.getStudyAreas();
         this.interestedStudents = tcc.getInterestedStudents();
     }
 
-    public TCC getTcc() {
-        return tcc;
+    public String getTccTitle() {
+        return tccTitle;
     }
 
-    public void setTcc(TCC tcc) {
-        this.tcc = tcc;
+    public String getTccDescription() {
+        return tccDescription;
+    }
+
+    public Collection<StudyArea> getStudyAreas() {
+        return studyAreas;
     }
 
     public Collection<Student> getInterestedStudents() {

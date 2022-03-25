@@ -3,6 +3,7 @@ package com.psoft.match.tcc.service.user;
 import com.psoft.match.tcc.dto.OrientationIssueDTO;
 import com.psoft.match.tcc.dto.TCCDTO;
 import com.psoft.match.tcc.model.StudyArea;
+import com.psoft.match.tcc.model.tcc.OrientationIssue;
 import com.psoft.match.tcc.model.tcc.TCC;
 import com.psoft.match.tcc.model.user.Professor;
 import com.psoft.match.tcc.model.user.Student;
@@ -11,17 +12,17 @@ import com.psoft.match.tcc.service.email.EmailService;
 import com.psoft.match.tcc.service.study_area.StudyAreaService;
 import com.psoft.match.tcc.service.tcc.TCCService;
 import com.psoft.match.tcc.service.tcc.orientation.OrientationIssueService;
-import com.psoft.match.tcc.util.exception.professor.InvalidQuotaException;
-import com.psoft.match.tcc.util.exception.professor.ProfessorAlreadyInterestedInStudyAreaException;
-import com.psoft.match.tcc.util.exception.professor.ProfessorNotFoundException;
-import com.psoft.match.tcc.util.exception.professor.TCCDoesNotBelongToProfessorException;
+import com.psoft.match.tcc.util.exception.professor.*;
 import com.psoft.match.tcc.util.exception.student.StudentDoesNotHaveOrientationInterestException;
+import com.psoft.match.tcc.util.exception.tcc.TCCRegisteredByProfessorException;
+import com.psoft.match.tcc.util.exception.user.TCCDoesNotBelongToUserException;
+import com.psoft.match.tcc.util.exception.user.UserAlreadyInterestedInStudyAreaException;
+import com.psoft.match.tcc.util.exception.user.UserAlreadyInterestedInTCCException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -35,7 +36,7 @@ public class ProfessorServiceImpl implements ProfessorService {
     private StudentService studentService;
 
     @Autowired
-    private TCCMatchUserService tccMatchUserService;
+    private TCCMatchUserService<Professor> tccMatchUserService;
 
     @Autowired
     private TCCService tccService;
@@ -54,7 +55,7 @@ public class ProfessorServiceImpl implements ProfessorService {
         return professorRepository
                 .findAll()
                 .stream()
-                .filter(professor -> professor.getQuota() > 0)
+                .filter(Professor::isAvailable)
                 .collect(Collectors.toList());
     }
 
@@ -80,7 +81,7 @@ public class ProfessorServiceImpl implements ProfessorService {
     @Transactional
     @Override
     public void approveOrientationInterest(Long tccId, Long studentId) {
-        Professor professor = tccMatchUserService.getLoggedUser();
+        Professor professor = tccMatchUserService.getLoggedUser(Professor.class);
         Student student = studentService.findStudentById(studentId);
         TCC tcc = tccService.findTCCById(tccId);
 
@@ -98,13 +99,13 @@ public class ProfessorServiceImpl implements ProfessorService {
     @Transactional
     @Override
     public void refuseOrientationInterest(Long tccId, Long studentId) {
-        Professor professor = tccMatchUserService.getLoggedUser();
+        Professor professor = tccMatchUserService.getLoggedUser(Professor.class);
         Student student = studentService.findStudentById(studentId);
         TCC tcc = tccService.findTCCById(tccId);
 
         this.validateOrientation(professor, tcc, student);
 
-        tcc.removeOrientationInterest(student);
+        tcc.removeInterestedStudent(student);
         student.removeOrientationInterest(tcc);
 
         tccService.saveTCC(tcc);
@@ -112,8 +113,8 @@ public class ProfessorServiceImpl implements ProfessorService {
     }
 
     private void validateOrientation(Professor professor, TCC tcc, Student student) {
-        if (!professor.getRegisteredTCCs().contains(tcc)) throw new TCCDoesNotBelongToProfessorException(tcc.getId(), professor.getFullName());
-        if (!tcc.getInterestedStudents().contains(student)) throw new StudentDoesNotHaveOrientationInterestException(student.getFullName());
+        if (!professor.getRegisteredTCCs().contains(tcc)) throw new TCCDoesNotBelongToUserException(professor.getFullName(), tcc.getId());
+        if (!tcc.getInterestedStudents().contains(student)) throw new StudentDoesNotHaveOrientationInterestException(student.getFullName(), tcc.getTitle());
     }
 
     @Transactional
@@ -125,22 +126,29 @@ public class ProfessorServiceImpl implements ProfessorService {
     @Transactional
     @Override
     public void declareOrientationInterest(Long tccId) {
-        Professor professor = tccMatchUserService.getLoggedUser();
+        Professor professor = tccMatchUserService.getLoggedUser(Professor.class);
         TCC tcc = tccService.findTCCById(tccId);
 
-        professor.addOrientationInterest(tcc);
-        tcc.addOrientationInterest(professor);
+        this.validateOrientationInterest(professor, tcc);
 
-        emailService.notifyNewOrientationInterestToStudent(tcc.getAdvisedStudent(), professor, tcc);
+        professor.addOrientationInterest(tcc);
+        tcc.addInterestedProfessor(professor);
+
+        emailService.notifyNewOrientationInterestToUser(tcc.getAuthor(), professor, tcc);
 
         tccService.saveTCC(tcc);
         professorRepository.save(professor);
     }
 
+    private void validateOrientationInterest(Professor professor, TCC tcc) {
+        if (!tcc.isCreatedByStudent()) throw new TCCRegisteredByProfessorException(tcc.getId());
+        if (tcc.getInterestedProfessors().contains(professor)) throw new UserAlreadyInterestedInTCCException(professor.getFullName(), tcc.getTitle());
+    }
+
     @Transactional
     @Override
     public void addInterestedStudyArea(Long studyAreaId) {
-        Professor professor = tccMatchUserService.getLoggedUser();
+        Professor professor = tccMatchUserService.getLoggedUser(Professor.class);
         StudyArea studyArea = studyAreaService.findStudyAreaById(studyAreaId);
 
         this.validateAddInterestedStudyArea(professor, studyArea);
@@ -154,14 +162,14 @@ public class ProfessorServiceImpl implements ProfessorService {
 
     private void validateAddInterestedStudyArea(Professor professor, StudyArea studyArea){
         if(professor.getInterestedStudyAreas().contains(studyArea)){
-            throw new ProfessorAlreadyInterestedInStudyAreaException(professor.getFullName(), studyArea.getDescription());
+            throw new UserAlreadyInterestedInStudyAreaException(professor.getFullName(), studyArea.getDescription());
         }
     }
 
     @Transactional
     @Override
     public void updateQuota(Integer quota) {
-        Professor professor = tccMatchUserService.getLoggedUser();
+        Professor professor = tccMatchUserService.getLoggedUser(Professor.class);
 
         this.validateQuota(quota);
 
@@ -172,12 +180,12 @@ public class ProfessorServiceImpl implements ProfessorService {
 
     @Transactional
     @Override
-    public void registerOrientationIssue(Long tccId, OrientationIssueDTO orientationIssueDTO) {
-        Professor professor = tccMatchUserService.getLoggedUser();
+    public OrientationIssue registerTCCOrientationIssue(Long tccId, OrientationIssueDTO orientationIssueDTO) {
+        Professor professor = tccMatchUserService.getLoggedUser(Professor.class);
         TCC tcc = tccService.findTCCById(tccId);
 
-        orientationIssueService.registerOrientationIssue(professor, tcc, orientationIssueDTO);
         professorRepository.save(professor);
+        return orientationIssueService.registerOrientationIssue(professor, tcc, orientationIssueDTO);
     }
 
     private void validateQuota(Integer quota) {
@@ -186,9 +194,19 @@ public class ProfessorServiceImpl implements ProfessorService {
 
     @Override
     public Collection<TCC> getRegisteredTCCs() {
-        Professor professor = tccMatchUserService.getLoggedUser();
+        Professor professor = tccMatchUserService.getLoggedUser(Professor.class);
 
         return professor.getRegisteredTCCs();
+    }
+
+    @Override
+    public Collection<TCC> getOrientationSolicitations() {
+        Professor professor = tccMatchUserService.getLoggedUser(Professor.class);
+        return professor
+                .getRegisteredTCCs()
+                .stream()
+                .filter(TCC::isAvailable)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -198,8 +216,8 @@ public class ProfessorServiceImpl implements ProfessorService {
 
     @Transactional
     @Override
-    public TCC createTCC(TCCDTO tccdto) {
-        Professor professor = tccMatchUserService.getLoggedUser();
+    public TCC createProfessorTCC(TCCDTO tccdto) {
+        Professor professor = tccMatchUserService.getLoggedUser(Professor.class);
         Collection<StudyArea> studyAreas = studyAreaService.findStudyAreasById(tccdto.getStudyAreasIds());
 
         TCC tcc = tccService.createTCC(tccdto, professor);
@@ -212,18 +230,9 @@ public class ProfessorServiceImpl implements ProfessorService {
     }
 
 	@Override
-	public Collection<TCC> getOngoingGuidelines() {
-		Professor professor = tccMatchUserService.getLoggedUser();
-		Collection<TCC> orientations = new HashSet<TCC>();
-		
-        Collection<TCC> tccs = professor.getRegisteredTCCs();
-         
-        for(TCC tcc : tccs) {
-        	if(tcc.getAdvisedStudent() != null) {
-        		orientations.add(tcc);
-        	}
-        }
-        return orientations;
+	public Collection<TCC> getOngoingOrientations() {
+		Professor professor = tccMatchUserService.getLoggedUser(Professor.class);
+		return professor.getOnGoingTCCs();
 	}
 
 }

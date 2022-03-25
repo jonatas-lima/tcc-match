@@ -26,17 +26,17 @@ public class TCCServiceImpl implements TCCService {
     }
 
     @Override
-    public TCC findTCCById(Long id) {
-        return tccRepository.findById(id).orElseThrow(() -> new TCCNotFoundException(id));
-    }
-
-    @Override
-    public List<TCC> findAvailableTCCs() {
+    public List<TCC> getProfessorsTCCs() {
         return tccRepository
                 .findAll()
                 .stream()
-                .filter(TCC::isAvailable)
+                .filter(TCC::isCreatedByProfessor)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public TCC findTCCById(Long id) {
+        return tccRepository.findById(id).orElseThrow(() -> new TCCNotFoundException(id));
     }
 
     @Override
@@ -53,14 +53,14 @@ public class TCCServiceImpl implements TCCService {
     @Transactional
     @Override
     public TCC createTCC(TCCDTO tccDTO, Student student) {
-        TCC tcc = new TCC(student, tccDTO.getTitle(), tccDTO.getDescription());
+        TCC tcc = new TCC(student, tccDTO.getTitle(), tccDTO.getDescription(), TCCStatus.PENDING_APPROVAL);
         return this.saveTCC(tcc);
     }
 
     @Transactional
     @Override
     public TCC createTCC(TCCDTO tccDTO, Professor professor) {
-        TCC tcc = new TCC(professor, tccDTO.getTitle(), tccDTO.getDescription());
+        TCC tcc = new TCC(professor, tccDTO.getTitle(), tccDTO.getDescription(), TCCStatus.APPROVED);
         return this.saveTCC(tcc);
     }
 

@@ -26,7 +26,7 @@ public class AuthServiceImpl implements AuthService {
     private AuthenticationManager authenticationManager;
 
     @Autowired
-    private TCCMatchUserService tccMatchUserService;
+    private TCCMatchUserService<TCCMatchUser> tccMatchUserService;
 
     @Override
     public String login(CredentialsDTO credentialsDTO) {

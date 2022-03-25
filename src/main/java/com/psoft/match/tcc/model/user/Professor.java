@@ -33,10 +33,6 @@ public class Professor extends TCCMatchUser {
     )
     private Set<TCC> interestedTCCs;
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "advisor")
-    private Set<TCC> registeredTCCs;
-    
     public Professor() {}
 
     public Professor(String fullName, String email, String username, String password, Collection<String> labs, Integer quota) {
@@ -44,7 +40,6 @@ public class Professor extends TCCMatchUser {
         this.interestedStudyAreas = new HashSet<>();
         this.interestedTCCs = new HashSet<>();
         this.labs = labs;
-        this.registeredTCCs = new HashSet<>();
         this.quota = quota;
     }
 
@@ -64,21 +59,13 @@ public class Professor extends TCCMatchUser {
         return labs;
     }
 
-    public void addLab(String lab) {
-        this.labs.add(lab);
-    }
-
-    public void removeLab(String lab) {
-        this.labs.remove(lab);
-    }
-
     public Collection<TCC> getInterestedTCCs() {
         return interestedTCCs;
     }
 
     @JsonIgnore
     public Collection<TCC> getOnGoingTCCs() {
-        return this.registeredTCCs
+        return this.getRegisteredTCCs()
                 .stream()
                 .filter(tcc -> tcc.getTccStatus().equals(TCCStatus.ON_GOING))
                 .collect(Collectors.toList());
@@ -86,22 +73,6 @@ public class Professor extends TCCMatchUser {
 
     public boolean addOrientationInterest(TCC orientationInterest) {
         return this.interestedTCCs.add(orientationInterest);
-    }
-
-    public boolean removeOrientationInterest(TCC orientationInterest) {
-        return this.interestedTCCs.remove(orientationInterest);
-    }
-
-    public Collection<TCC> getRegisteredTCCs() {
-        return new HashSet<>(registeredTCCs);
-    }
-
-    public boolean registerTCC(TCC tcc) {
-        return this.registeredTCCs.add(tcc);
-    }
-
-    public boolean removeTCC(TCC tcc) {
-        return this.registeredTCCs.remove(tcc);
     }
 
     public Integer getQuota() {
@@ -127,11 +98,12 @@ public class Professor extends TCCMatchUser {
 
     @PreRemove
     private void preRemove() {
-        this.registeredTCCs.forEach(tcc -> {
+        this.getRegisteredTCCs().forEach(tcc -> {
             tcc.setAdvisor(null);
-            tcc.setTccStatus(TCCStatus.PENDING);
+            tcc.setTccStatus(TCCStatus.PENDING_APPROVAL);
             tcc.setTerm(null);
+            tcc.setAuthor(null);
         });
-        this.interestedTCCs.forEach(tcc -> tcc.removeOrientationInterest(this));
+        this.interestedTCCs.forEach(tcc -> tcc.removeInterestedStudent(this));
     }
 }

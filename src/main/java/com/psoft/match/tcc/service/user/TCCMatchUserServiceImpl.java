@@ -4,20 +4,18 @@ import com.psoft.match.tcc.dto.OrientationIssueDTO;
 import com.psoft.match.tcc.model.tcc.OrientationIssue;
 import com.psoft.match.tcc.model.tcc.TCC;
 import com.psoft.match.tcc.model.user.TCCMatchUser;
-import com.psoft.match.tcc.repository.tcc.OrientationIssueRepository;
 import com.psoft.match.tcc.repository.user.TCCMatchUserRepository;
 import com.psoft.match.tcc.service.auth.AuthService;
 import com.psoft.match.tcc.service.tcc.orientation.OrientationIssueService;
 import com.psoft.match.tcc.util.exception.common.UnauthorizedException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.Optional;
 
 @Service
-public class TCCMatchUserServiceImpl implements TCCMatchUserService {
+public class TCCMatchUserServiceImpl<T extends TCCMatchUser> implements TCCMatchUserService<T> {
 
     @Autowired
     private AuthService authService;
@@ -29,12 +27,10 @@ public class TCCMatchUserServiceImpl implements TCCMatchUserService {
     private OrientationIssueService orientationIssueService;
 
     @Override
-    public <T extends TCCMatchUser> T getLoggedUser() {
-        try {
-            return (T) authService.getLoggedUser();
-        } catch (ClassCastException e) {
-            throw new UnauthorizedException();
-        }
+    public T getLoggedUser(Class<T> klass) {
+        T user = (T) authService.getLoggedUser();
+        if (klass.isInstance(user)) return user;
+        throw new UnauthorizedException();
     }
 
     @Transactional
@@ -60,18 +56,8 @@ public class TCCMatchUserServiceImpl implements TCCMatchUserService {
     }
 
     @Override
-    public TCCMatchUser findByUsername(String username) {
-        return this.findByUsernameOpt(username).orElseThrow(() -> new UsernameNotFoundException(username));
-    }
-
-    @Override
     public Optional<TCCMatchUser> findByUsernameOpt(String username) {
         return tccMatchUserRepository.findByUsername(username);
-    }
-
-    @Override
-    public TCCMatchUser findByEmail(String email) {
-        return this.findByEmailOpt(email).orElseThrow(() -> new UsernameNotFoundException(email));
     }
 
     @Override

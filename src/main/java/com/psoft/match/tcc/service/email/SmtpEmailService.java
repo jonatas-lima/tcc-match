@@ -5,6 +5,7 @@ import com.psoft.match.tcc.model.tcc.TCC;
 import com.psoft.match.tcc.model.user.Admin;
 import com.psoft.match.tcc.model.user.Professor;
 import com.psoft.match.tcc.model.user.Student;
+import com.psoft.match.tcc.model.user.TCCMatchUser;
 import com.psoft.match.tcc.service.user.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,23 +29,23 @@ public class SmtpEmailService implements EmailService {
     private MailSender mailSender;
 
     @Override
-    public void notifyNewTCCToInterestedStudents(Student student, StudyArea studyArea, TCC tcc) {
+    public void notifyNewTCCToInterestedUsers(Student student, StudyArea studyArea, TCC tcc) {
         String subject = String.format("Novo TCC cadastrado na área: %s", studyArea.getDescription().toUpperCase());
         SimpleMailMessage mailMessage = this.buildMailMessage(student.getEmail(), subject, tcc.toEmailFormat());
         mailSender.send(mailMessage);
     }
 
     @Override
-    public void notifyNewOrientationInterestToStudent(Student student, Professor interestedProfessor, TCC tcc) {
+    public void notifyNewOrientationInterestToUser(TCCMatchUser user, Professor interestedProfessor, TCC tcc) {
         String subject = String.format("INTERESSE DE ORIENTAÇÃO NO TCC %s PELO PROFESSOR %s", tcc.getTitle(), interestedProfessor.getEmail());
-        SimpleMailMessage mailMessage = this.buildMailMessage(student.getEmail(), subject, tcc.toString());
+        SimpleMailMessage mailMessage = this.buildMailMessage(user.getEmail(), subject, tcc.toString());
         mailSender.send(mailMessage);
     }
 
     @Override
-    public void notifyNewOrientationInterestToProfessor(Professor professor, Student interestedStudent, TCC tcc) {
+    public void notifyNewOrientationInterestToUser(TCCMatchUser user, Student interestedStudent, TCC tcc) {
         String subject = String.format("INTERESSE DE ORIENTAÇÃO NO TCC %s PELO ALUNO %s", tcc.getTitle(), interestedStudent.getFullName());
-        SimpleMailMessage mailMessage = this.buildMailMessage(professor.getEmail(), subject, tcc.toEmailFormat());
+        SimpleMailMessage mailMessage = this.buildMailMessage(user.getEmail(), subject, tcc.toEmailFormat());
         mailSender.send(mailMessage);
     }
 

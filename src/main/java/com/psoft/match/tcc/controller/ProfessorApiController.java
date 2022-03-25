@@ -3,6 +3,7 @@ package com.psoft.match.tcc.controller;
 import com.psoft.match.tcc.dto.NewQuotaDTO;
 import com.psoft.match.tcc.dto.OrientationIssueDTO;
 import com.psoft.match.tcc.dto.TCCDTO;
+import com.psoft.match.tcc.model.tcc.OrientationIssue;
 import com.psoft.match.tcc.model.tcc.TCC;
 import com.psoft.match.tcc.response.SolicitationResponse;
 import com.psoft.match.tcc.response.TCCResponse;
@@ -28,28 +29,28 @@ public class ProfessorApiController {
     private ProfessorService professorService;
 
     @ApiOperation("Registra interesse em uma proposta de TCC")
-    @PostMapping("/tcc_proposal/{tccProposalId}/orientation")
-    public ResponseEntity<Void> declareOrientationInterest(@PathVariable Long tccProposalId) {
-        professorService.declareOrientationInterest(tccProposalId);
+    @PutMapping("/tcc/{tccId}/interest")
+    public ResponseEntity<Void> declareOrientationInterest(@PathVariable Long tccId) {
+        professorService.declareOrientationInterest(tccId);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @ApiOperation("Adiciona um novo TCC ao sistema")
     @PostMapping("/tcc")
     public ResponseEntity<TCC> createTCC(@RequestBody TCCDTO tccDTO) {
-        TCC tcc = professorService.createTCC(tccDTO);
+        TCC tcc = professorService.createProfessorTCC(tccDTO);
         return new ResponseEntity<>(tcc, HttpStatus.CREATED);
     }
 
     @ApiOperation("Aprova a solicitação de orientação de um aluno em um TCC")
-    @PostMapping("/tcc/{tccId}/interest/{studentId}")
+    @PutMapping("/tcc/{tccId}/student/{studentId}/interest/approve")
     public ResponseEntity<String> approveOrientation(@PathVariable Long tccId, @PathVariable Long studentId) {
         professorService.approveOrientationInterest(tccId, studentId);
         return new ResponseEntity<>(String.format(Constants.ORIENTATION_APPROVED_RESPONSE, tccId), HttpStatus.NO_CONTENT);
     }
 
     @ApiOperation("Recusa a solicitação de orientação de um aluno em um TCC")
-    @DeleteMapping("/tcc/{tccId}/interest/{studentId}")
+    @PutMapping("/tcc/{tccId}/student/{studentId}/interest/refuse")
     public ResponseEntity<String> refuseOrientation(@PathVariable Long tccId, @PathVariable Long studentId) {
         professorService.refuseOrientationInterest(tccId, studentId);
         return new ResponseEntity<>(String.format(Constants.ORIENTATION_REFUSED_RESPONSE, tccId), HttpStatus.NO_CONTENT);
@@ -85,10 +86,10 @@ public class ProfessorApiController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @ApiOperation("Lista as solicitções de orientação em um TCC cadastradas pelos alunos")
+    @ApiOperation("Lista as solicitações de orientação em um TCC cadastradas pelos alunos")
     @GetMapping("/tcc/solicitation")
     public ResponseEntity<Collection<SolicitationResponse>> getStudentsSolicitations() {
-        Collection<TCC> professorTCCs = professorService.getRegisteredTCCs();
+        Collection<TCC> professorTCCs = professorService.getOrientationSolicitations();
         Collection<SolicitationResponse> response = professorTCCs.stream().map(SolicitationResponse::new).collect(Collectors.toList());
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -96,15 +97,15 @@ public class ProfessorApiController {
     @ApiOperation("Lista os temas de TCC orientados pelo professor")
     @GetMapping("/tcc/orientation")
     public ResponseEntity<Collection<TCCResponse>> getOngoingGuidelines() {
-        Collection<TCC> professorTCCs = professorService.getOngoingGuidelines();
+        Collection<TCC> professorTCCs = professorService.getOngoingOrientations();
         Collection<TCCResponse> response = professorTCCs.stream().map(TCCResponse::new).collect(Collectors.toList());
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @ApiOperation("Registra algum problema na orientação de um TCC orientado pelo professor")
     @PostMapping("/tcc/{tccId}/issue")
-    public ResponseEntity<Void> registerOrientationIssue(@PathVariable Long tccId, @RequestBody OrientationIssueDTO orientationIssueDTO) {
-        professorService.registerOrientationIssue(tccId, orientationIssueDTO);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+    public ResponseEntity<OrientationIssue> registerOrientationIssue(@PathVariable Long tccId, @RequestBody OrientationIssueDTO orientationIssueDTO) {
+        OrientationIssue orientationIssue = professorService.registerTCCOrientationIssue(tccId, orientationIssueDTO);
+        return new ResponseEntity<>(orientationIssue, HttpStatus.CREATED);
     }
 }

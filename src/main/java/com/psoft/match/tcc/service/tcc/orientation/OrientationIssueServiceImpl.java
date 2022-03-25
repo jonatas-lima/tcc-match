@@ -9,8 +9,7 @@ import com.psoft.match.tcc.model.user.TCCMatchUser;
 import com.psoft.match.tcc.model.user.UserRole;
 import com.psoft.match.tcc.repository.tcc.OrientationIssueRepository;
 import com.psoft.match.tcc.service.user.TCCMatchUserService;
-import com.psoft.match.tcc.util.exception.professor.TCCDoesNotBelongToProfessorException;
-import com.psoft.match.tcc.util.exception.student.TCCDoesNotBelongToStudentException;
+import com.psoft.match.tcc.util.exception.user.TCCDoesNotBelongToUserException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -35,26 +34,26 @@ public class OrientationIssueServiceImpl implements OrientationIssueService {
 
     @Transactional
     @Override
-    public void registerOrientationIssue(Student student, TCC tcc, OrientationIssueDTO orientationIssueDTO) {
-        if (student.getTcc() != null && !student.getTcc().equals(tcc)) throw new TCCDoesNotBelongToStudentException(student.getFullName(), tcc.getId());
+    public OrientationIssue registerOrientationIssue(Student student, TCC tcc, OrientationIssueDTO orientationIssueDTO) {
+        if (student.getTcc() != null && !student.getTcc().equals(tcc)) throw new TCCDoesNotBelongToUserException(student.getFullName(), tcc.getId());
 
-        this.createOrientationIssue(student, tcc, orientationIssueDTO);
+        return this.createOrientationIssue(student, tcc, orientationIssueDTO);
     }
 
     @Transactional
     @Override
-    public void registerOrientationIssue(Professor professor, TCC tcc, OrientationIssueDTO orientationIssueDTO) {
-        if (!professor.getOnGoingTCCs().contains(tcc)) throw new TCCDoesNotBelongToProfessorException(tcc.getId(), professor.getFullName());
+    public OrientationIssue registerOrientationIssue(Professor professor, TCC tcc, OrientationIssueDTO orientationIssueDTO) {
+        if (!professor.getOnGoingTCCs().contains(tcc)) throw new TCCDoesNotBelongToUserException(professor.getFullName(), tcc.getId());
 
-        this.createOrientationIssue(professor, tcc, orientationIssueDTO);
+        return this.createOrientationIssue(professor, tcc, orientationIssueDTO);
     }
 
-    private void createOrientationIssue(TCCMatchUser tccMatchUser, TCC tcc, OrientationIssueDTO orientationIssueDTO) {
+    private OrientationIssue createOrientationIssue(TCCMatchUser tccMatchUser, TCC tcc, OrientationIssueDTO orientationIssueDTO) {
         OrientationIssue orientationIssue = new OrientationIssue(orientationIssueDTO.getRelatedIssue(), tccMatchUser, tcc);
         tccMatchUser.addOrientationIssue(orientationIssue);
 
-        orientationIssueRepository.save(orientationIssue);
         tccMatchUserService.saveUser(tccMatchUser);
+        return orientationIssueRepository.save(orientationIssue);
     }
 
     @Override
