@@ -19,21 +19,21 @@ public class FakeEmailService implements EmailService {
     private AdminService adminService;
 
     @Override
-    public void notifyNewTCCToInterestedStudents(Student student, StudyArea studyArea, TCC tcc) {
+    public void notifyNewTCCToInterestedUsers(Student student, StudyArea studyArea, TCC tcc) {
         String email = String.format("NOVO TCC CADASTRADO NA ÁREA: %s: %s", studyArea.getDescription(), tcc.toEmailFormat());
         student.receiveEmail(email);
     }
 
     @Override
-    public void notifyNewOrientationInterestToStudent(Student student, Professor interestedProfessor, TCC tcc) {
+    public void notifyNewOrientationInterestToUser(TCCMatchUser user, Professor interestedProfessor, TCC tcc) {
         String email = String.format("INTERESSE DE ORIENTAÇÃO NO TCC %s PELO PROFESSOR %s", tcc.getTitle(), interestedProfessor.getEmail());
-        student.receiveEmail(email);
+        user.receiveEmail(email);
     }
 
     @Override
-    public void notifyNewOrientationInterestToProfessor(Professor professor, Student interestedStudent, TCC tcc) {
+    public void notifyNewOrientationInterestToUser(TCCMatchUser user, Student interestedStudent, TCC tcc) {
         String email = String.format("INTERESSE DE ORIENTAÇÃO NO TCC %s PELO ALUNO %s", tcc.getTitle(), interestedStudent.getFullName());
-        professor.receiveEmail(email);
+        user.receiveEmail(email);
     }
 
     @Override

@@ -13,9 +13,9 @@ public interface OrientationIssueService {
 
     void saveOrientationIssue(OrientationIssue orientationIssue);
 
-    void registerOrientationIssue(Student student, TCC tcc, OrientationIssueDTO orientationIssueDTO);
+    OrientationIssue registerOrientationIssue(Student student, TCC tcc, OrientationIssueDTO orientationIssueDTO);
 
-    void registerOrientationIssue(Professor professor, TCC tcc, OrientationIssueDTO orientationIssueDTO);
+    OrientationIssue registerOrientationIssue(Professor professor, TCC tcc, OrientationIssueDTO orientationIssueDTO);
 
     Collection<OrientationIssue> getOrientationIssues(String term, UserRole userRole);
 }

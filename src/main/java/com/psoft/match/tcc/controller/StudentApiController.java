@@ -2,7 +2,7 @@ package com.psoft.match.tcc.controller;
 
 import com.psoft.match.tcc.dto.OrientationIssueDTO;
 import com.psoft.match.tcc.dto.TCCDTO;
-import com.psoft.match.tcc.model.StudyArea;
+import com.psoft.match.tcc.model.tcc.OrientationIssue;
 import com.psoft.match.tcc.model.tcc.TCC;
 import com.psoft.match.tcc.model.user.Professor;
 import com.psoft.match.tcc.service.user.StudentService;
@@ -26,44 +26,44 @@ public class StudentApiController {
     private StudentService studentService;
 
 	@ApiOperation("Registra interesse em ser orientado em um TCC")
-    @PostMapping("/tcc/{tccId}/orientation")
+    @PutMapping("/tcc/{tccId}/orientation")
     public ResponseEntity<Void> registerTccOrientationInterest(@PathVariable Long tccId) {
-        studentService.declareTccOrientationInterest(tccId);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        studentService.declareTCCOrientationInterest(tccId);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
 	@ApiOperation("Informa problema na orientação de um TCC")
     @PostMapping("/tcc/issue")
-    public ResponseEntity<Void> registerTccOrientationIssue(@RequestBody OrientationIssueDTO orientationIssue) {
-        studentService.registerOrientationIssue(orientationIssue);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+    public ResponseEntity<OrientationIssue> registerTccOrientationIssue(@RequestBody OrientationIssueDTO orientationIssueDTO) {
+		OrientationIssue orientationIssue = studentService.registerTCCOrientationIssue(orientationIssueDTO);
+        return new ResponseEntity<>(orientationIssue, HttpStatus.CREATED);
     }
 
 	@ApiOperation(value = "Adiciona uma área de estudo no estudante logado")
 	@PutMapping(value = "/study-area/{idStudyArea}")
-    public ResponseEntity<StudyArea> addInterestedStudyArea(@PathVariable Long idStudyArea) {
-		StudyArea addedStudyArea = studentService.addInterestedStudyArea(idStudyArea);
-		return new ResponseEntity<>(addedStudyArea, HttpStatus.OK);
+    public ResponseEntity<Void> addInterestedStudyArea(@PathVariable Long idStudyArea) {
+		studentService.addInterestedStudyArea(idStudyArea);
+		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
 
 	@ApiOperation(value = "Lista os professores que tem interesse nas áreas do estudante")
 	@GetMapping(value = "/study-area/professor")
-    public ResponseEntity<List<Professor>> listInterestedProfessors() {
-		List<Professor> professors = studentService.listInterestedProfessors();
+    public ResponseEntity<List<Professor>> listProfessorsWithSharedInterests() {
+		List<Professor> professors = studentService.getProfessorsWithSharedInterests();
 		return new ResponseEntity<>(professors, HttpStatus.OK);
 	}
 
 	@ApiOperation(value = "Adiciona uma proposta de tcc no sistema")
 	@PostMapping(value = "/tcc")
     public ResponseEntity<TCC> registerTCC(@RequestBody TCCDTO tccDTO) {
-		TCC tccProposal = studentService.createTCC(tccDTO);
+		TCC tccProposal = studentService.createStudentTCC(tccDTO);
     	return new ResponseEntity<>(tccProposal, HttpStatus.CREATED);
     }
 
-	@ApiOperation(value = "Lista os tccs cadastrados no sistema")
+	@ApiOperation(value = "Lista os tccs cadastrados pelos professores no sistema")
 	@GetMapping(value = "/tcc")
-    public ResponseEntity<List<TCC>> listTccs() {
-		List<TCC> tccs = studentService.listTccs();
-		return new ResponseEntity<>(tccs, HttpStatus.OK);
+    public ResponseEntity<List<TCC>> listStudentsTCCs() {
+		List<TCC> studentsTCCs = studentService.getProfessorRegisteredTCCs();
+		return new ResponseEntity<>(studentsTCCs, HttpStatus.OK);
 	}
 }

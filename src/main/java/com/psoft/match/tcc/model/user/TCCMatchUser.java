@@ -2,6 +2,7 @@ package com.psoft.match.tcc.model.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.psoft.match.tcc.model.tcc.OrientationIssue;
+import com.psoft.match.tcc.model.tcc.TCC;
 
 import javax.persistence.*;
 import java.util.*;
@@ -32,8 +33,12 @@ public abstract class TCCMatchUser {
     private Collection<String> emails;
 
     @JsonIgnore
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany
     private Set<OrientationIssue> orientationIssues;
+
+    @JsonIgnore
+    @OneToMany
+    private Set<TCC> registeredTCCs;
 
     public TCCMatchUser() {}
 
@@ -45,6 +50,7 @@ public abstract class TCCMatchUser {
         this.role = role;
         this.emails = new ArrayList<>();
         this.orientationIssues = new HashSet<>();
+        this.registeredTCCs = new HashSet<>();
     }
 
     public Long getId() {
@@ -108,8 +114,12 @@ public abstract class TCCMatchUser {
         return this.orientationIssues.add(orientationIssue);
     }
 
-    public boolean removeOrientationIssue(OrientationIssue orientationIssue) {
-        return this.orientationIssues.remove(orientationIssue);
+    public Set<TCC> getRegisteredTCCs() {
+        return registeredTCCs;
+    }
+
+    public boolean registerTCC(TCC tcc) {
+        return this.registeredTCCs.add(tcc);
     }
 
     @Override

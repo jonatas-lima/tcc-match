@@ -15,6 +15,7 @@ import com.psoft.match.tcc.response.TCCSummaryResponse;
 import com.psoft.match.tcc.service.study_area.StudyAreaService;
 import com.psoft.match.tcc.service.tcc.TCCService;
 import com.psoft.match.tcc.service.tcc.orientation.OrientationIssueService;
+import com.psoft.match.tcc.util.exception.professor.UnavailableProfessorException;
 import com.psoft.match.tcc.util.exception.studyarea.StudyAreaAlreadyExistsException;
 import com.psoft.match.tcc.util.exception.tcc.InvalidTermException;
 import com.psoft.match.tcc.util.exception.tcc.PendingTCCException;
@@ -41,7 +42,7 @@ public class AdminServiceImpl implements AdminService {
     private StudentService studentService;
 
     @Autowired
-    private TCCMatchUserService tccMatchUserService;
+    private TCCMatchUserService<Admin> tccMatchUserService;
 
     @Autowired
     private StudyAreaService studyAreaService;
@@ -197,9 +198,9 @@ public class AdminServiceImpl implements AdminService {
     private void validateTCCRegistration(TCC tcc) {
         Professor advisor = tcc.getAdvisor();
 
-        if (!advisor.isAvailable()) throw new RuntimeException("quota abaixo de 0");
+        if (!advisor.isAvailable()) throw new UnavailableProfessorException(advisor.getId());
 
-        if (tcc.getTccStatus().equals(TCCStatus.PENDING)) {
+        if (tcc.getTccStatus().equals(TCCStatus.PENDING_APPROVAL)) {
             throw new PendingTCCException(tcc.getId());
         }
     }
@@ -227,12 +228,16 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public List<TCC> getTCCs(String tccStatus, String term) {
+        this.validateTerm(term);
+
         TCCStatus status = TCCStatus.fromText(tccStatus);
         return tccService.getTCCsByStatusAndTerm(status, term);
     }
 
     @Override
     public OrientationIssuesSummaryResponse getOrientationIssues(String term) {
+        this.validateTerm(term);
+
         Collection<OrientationIssue> studentIssues = orientationIssueService.getOrientationIssues(term, UserRole.STUDENT);
         Collection<OrientationIssue> professorIssues = orientationIssueService.getOrientationIssues(term, UserRole.PROFESSOR);
 

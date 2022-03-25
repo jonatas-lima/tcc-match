@@ -107,11 +107,11 @@ public class TestDBService implements DBService {
         studentRepository.saveAll(students);
         studyAreaRepository.saveAll(studyAreas);
 
-        TCC tcc1 = new TCC(professor1, "Proposta 1", "descricao da proposta 1");
-        TCC tcc2 = new TCC(professor2, "Proposta 2", "descricao da proposta 2");
-        TCC tcc3 = new TCC(professor3, "Proposta 3", "descricao da proposta 3");
-        TCC tcc4 = new TCC(student2, "Proposta 4", "descricao da proposta 4");
-        TCC tcc5 = new TCC(student3, "Proposta 5", "descricao da proposta 5");
+        TCC tcc1 = new TCC(professor1, "Proposta 1", "descricao da proposta 1", TCCStatus.APPROVED);
+        TCC tcc2 = new TCC(professor2, "Proposta 2", "descricao da proposta 2", TCCStatus.APPROVED);
+        TCC tcc3 = new TCC(professor3, "Proposta 3", "descricao da proposta 3", TCCStatus.APPROVED);
+        TCC tcc4 = new TCC(student2, "Proposta 4", "descricao da proposta 4", TCCStatus.PENDING_APPROVAL);
+        TCC tcc5 = new TCC(student3, "Proposta 5", "descricao da proposta 5", TCCStatus.PENDING_APPROVAL);
 
         List<TCC> tccs = Arrays.asList(tcc1, tcc2, tcc3, tcc4, tcc5);
 
@@ -140,22 +140,22 @@ public class TestDBService implements DBService {
         professorRepository.saveAll(professors);
 
         professor1.addOrientationInterest(tcc4);
-        tcc4.addOrientationInterest(professor1);
+        tcc4.addInterestedProfessor(professor1);
 
         professor2.addOrientationInterest(tcc4);
-        tcc4.addOrientationInterest(professor2);
+        tcc4.addInterestedProfessor(professor2);
 
         professor3.addOrientationInterest(tcc4);
-        tcc4.addOrientationInterest(professor3);
+        tcc4.addInterestedProfessor(professor3);
 
         student2.addOrientationInterest(tcc3);
-        tcc3.addOrientationInterest(student2);
+        tcc3.addInterestedStudent(student2);
 
         student2.addOrientationInterest(tcc4);
-        tcc4.addOrientationInterest(student2);
+        tcc4.addInterestedStudent(student2);
 
         student3.addOrientationInterest(tcc4);
-        tcc4.addOrientationInterest(student3);
+        tcc4.addInterestedStudent(student3);
 
         tccRepository.saveAll(tccs);
 
@@ -163,6 +163,7 @@ public class TestDBService implements DBService {
         tcc1.setAdvisedStudent(student1);
         tcc1.setTerm("2020.1");
         tcc1.setTccStatus(TCCStatus.ON_GOING);
+        tcc1.setAdvisor(professor1);
 
         tccRepository.saveAll(tccs);
     }

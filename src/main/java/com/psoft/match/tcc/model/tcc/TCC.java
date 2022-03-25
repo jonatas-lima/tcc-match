@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.psoft.match.tcc.model.StudyArea;
 import com.psoft.match.tcc.model.user.Professor;
 import com.psoft.match.tcc.model.user.Student;
+import com.psoft.match.tcc.model.user.TCCMatchUser;
 import com.sun.istack.NotNull;
 
 import javax.persistence.*;
@@ -27,6 +28,9 @@ public class TCC {
     private String term;
 
     @ManyToOne
+    private TCCMatchUser author;
+
+    @OneToOne
     private Student advisedStudent;
 
     @ManyToOne
@@ -53,24 +57,14 @@ public class TCC {
     public TCC() {
     }
 
-    public TCC(Professor advisor, String title, String description, Student advisedStudent, Collection<StudyArea> studyAreas, Collection<Student> interestedStudents, TCCStatus tccStatus, Collection<Professor> interestedProfessors, String term) {
-        this.advisor = advisor;
+    public TCC(TCCMatchUser author, String title, String description, TCCStatus tccStatus) {
+        this.author = author;
         this.title = title;
         this.description = description;
-        this.advisedStudent = advisedStudent;
-        this.studyAreas = studyAreas;
-        this.interestedStudents = interestedStudents;
         this.tccStatus = tccStatus;
-        this.interestedProfessors = interestedProfessors;
-        this.term = term;
-    }
-
-    public TCC(Professor advisor, String title, String description) {
-        this(advisor, title, description, null, new HashSet<>(), new HashSet<>(), TCCStatus.APPROVED, new HashSet<>(), null);
-    }
-
-    public TCC(Student advisedStudent, String title, String description) {
-        this(null, title, description, advisedStudent, new HashSet<>(), new HashSet<>(), TCCStatus.PENDING, new HashSet<>(), null);
+        this.studyAreas = new HashSet<>();
+        this.interestedStudents = new HashSet<>();
+        this.interestedProfessors = new HashSet<>();
     }
 
     public Long getId() {
@@ -95,7 +89,8 @@ public class TCC {
         sb
                 .append("[INFORMAÇÕES]\n")
                 .append("Título do TCC: ").append(getTitle()).append("\n")
-                .append("Professor: ").append(advisor.getFullName()).append("\n");
+                .append("Descrição: ").append(getDescription()).append("\n")
+                .append("Autor: ").append(author.getFullName()).append("\n");
 
         getStudyAreas().forEach(studyArea -> sb.append("- ").append(studyArea.getDescription()).append("\n"));
 
@@ -154,19 +149,19 @@ public class TCC {
         return interestedProfessors;
     }
 
-    public boolean addOrientationInterest(Professor interestedProfessor) {
+    public boolean addInterestedProfessor(Professor interestedProfessor) {
         return this.interestedProfessors.add(interestedProfessor);
     }
 
-    public boolean addOrientationInterest(Student interestedStudent) {
+    public boolean addInterestedStudent(Student interestedStudent) {
         return this.interestedStudents.add(interestedStudent);
     }
 
-    public boolean removeOrientationInterest(Student interestedStudent) {
+    public boolean removeInterestedStudent(Student interestedStudent) {
         return this.interestedStudents.remove(interestedStudent);
     }
 
-    public boolean removeOrientationInterest(Professor interestedProfessor) {
+    public boolean removeInterestedStudent(Professor interestedProfessor) {
         return this.interestedProfessors.remove(interestedProfessor);
     }
 
@@ -190,9 +185,22 @@ public class TCC {
         this.tccStatus = TCCStatus.FINISHED;
     }
 
+    public TCCMatchUser getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(TCCMatchUser author) {
+        this.author = author;
+    }
+
     @JsonIgnore
     public boolean isCreatedByStudent() {
-        return this.advisedStudent != null && advisor == null;
+        return author != null && author instanceof Student;
+    }
+
+    @JsonIgnore
+    public boolean isCreatedByProfessor() {
+        return author != null && author instanceof Professor;
     }
 
     @Override

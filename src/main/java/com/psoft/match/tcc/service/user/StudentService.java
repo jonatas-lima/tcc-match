@@ -3,6 +3,7 @@ package com.psoft.match.tcc.service.user;
 import com.psoft.match.tcc.dto.OrientationIssueDTO;
 import com.psoft.match.tcc.dto.TCCDTO;
 import com.psoft.match.tcc.model.StudyArea;
+import com.psoft.match.tcc.model.tcc.OrientationIssue;
 import com.psoft.match.tcc.model.tcc.TCC;
 import com.psoft.match.tcc.model.user.Professor;
 import com.psoft.match.tcc.model.user.Student;
@@ -11,9 +12,9 @@ import java.util.List;
 
 public interface StudentService {
 
-    void registerOrientationIssue(OrientationIssueDTO orientationIssue);
+	OrientationIssue registerTCCOrientationIssue(OrientationIssueDTO orientationIssue);
 
-    void declareTccOrientationInterest(Long tccId);
+    void declareTCCOrientationInterest(Long tccId);
 
 	Student findStudentById(Long id);
 
@@ -23,9 +24,9 @@ public interface StudentService {
 
 	StudyArea addInterestedStudyArea(Long idStudyArea);
 	
-	List<Professor> listInterestedProfessors();
+	List<Professor> getProfessorsWithSharedInterests();
 	
-	TCC createTCC(TCCDTO tcc);
+	TCC createStudentTCC(TCCDTO tcc);
 	
-	List<TCC> listTccs();
+	List<TCC> getProfessorRegisteredTCCs();
 }

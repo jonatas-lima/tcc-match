@@ -1,5 +1,6 @@
 package com.psoft.match.tcc.security;
 
+import com.psoft.match.tcc.util.exception.CustomErrorType;
 import com.psoft.match.tcc.util.exception.auth.ExpiredTokenException;
 import com.psoft.match.tcc.util.exception.common.UnauthorizedException;
 import io.jsonwebtoken.Claims;
@@ -9,6 +10,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 
 @Component
@@ -57,5 +59,11 @@ public class JWTUtil {
         } catch (ExpiredJwtException e) {
             throw new ExpiredTokenException();
         }
+    }
+
+    public static CustomErrorType buildAuthError(String message, int statusCode, HttpServletResponse response) {
+        response.setStatus(statusCode);
+        response.setContentType("application/json");
+        return new CustomErrorType(message);
     }
 }

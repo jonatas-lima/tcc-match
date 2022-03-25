@@ -3,6 +3,7 @@ package com.psoft.match.tcc.model.user;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.psoft.match.tcc.model.StudyArea;
 import com.psoft.match.tcc.model.tcc.TCC;
+import com.psoft.match.tcc.model.tcc.TCCStatus;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -24,10 +25,6 @@ public class Student extends TCCMatchUser {
     private Set<TCC> orientationInterests;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "advisedStudent")
-    private Set<TCC> tccProposals;
-
-    @JsonIgnore
     @OneToOne
     private TCC tcc;
 
@@ -44,7 +41,6 @@ public class Student extends TCCMatchUser {
         this.expectedConclusionTerm = expectedConclusionTerm;
         this.interestedStudyAreas = new HashSet<>();
         this.orientationInterests = new HashSet<>();
-        this.tccProposals = new HashSet<>();
         this.tcc = null;
     }
 
@@ -84,14 +80,6 @@ public class Student extends TCCMatchUser {
         return this.orientationInterests.remove(orientationInterest);
     }
 
-    public Set<TCC> getTccProposals() {
-        return tccProposals;
-    }
-
-    public boolean addTccProposal(TCC tccProposal) {
-        return this.tccProposals.add(tccProposal);
-    }
-
     public TCC getTcc() {
         return tcc;
     }
@@ -102,7 +90,13 @@ public class Student extends TCCMatchUser {
 
     @PreRemove
     private void preRemove() {
-        if (this.tcc != null) this.tcc.setAdvisedStudent(null);
-        this.tccProposals.forEach(tcc -> tcc.setAdvisedStudent(null));
+        if (this.tcc != null) {
+            this.tcc.setAdvisedStudent(null);
+            this.tcc.setTccStatus(TCCStatus.PENDING_APPROVAL);
+        }
+        this.getRegisteredTCCs().forEach(tcc -> {
+            tcc.setAuthor(null);
+            tcc.setTccStatus(TCCStatus.PENDING_APPROVAL);
+        });
     }
 }
