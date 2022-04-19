@@ -40,17 +40,19 @@ public abstract class TCCMatchUser {
     @OneToMany
     private Set<TCC> registeredTCCs;
 
-    public TCCMatchUser() {}
+    public TCCMatchUser() {
+        this.orientationIssues = new HashSet<>();
+        this.registeredTCCs = new HashSet<>();
+        this.emails = new ArrayList<>();
+    }
 
     public TCCMatchUser(String fullName, String email, String username, String password, UserRole role) {
+        this();
         this.fullName = fullName;
         this.email = email;
         this.username = username;
         this.password = password;
         this.role = role;
-        this.emails = new ArrayList<>();
-        this.orientationIssues = new HashSet<>();
-        this.registeredTCCs = new HashSet<>();
     }
 
     public Long getId() {

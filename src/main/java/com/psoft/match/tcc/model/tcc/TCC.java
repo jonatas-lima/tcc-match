@@ -55,20 +55,25 @@ public class TCC {
     private TCCStatus tccStatus;
 
     public TCC() {
-    }
-
-    public TCC(TCCMatchUser author, String title, String description, TCCStatus tccStatus) {
-        this.author = author;
-        this.title = title;
-        this.description = description;
-        this.tccStatus = tccStatus;
         this.studyAreas = new HashSet<>();
         this.interestedStudents = new HashSet<>();
         this.interestedProfessors = new HashSet<>();
     }
 
+    public TCC(TCCMatchUser author, String title, String description, TCCStatus tccStatus) {
+        this();
+        this.author = author;
+        this.title = title;
+        this.description = description;
+        this.tccStatus = tccStatus;
+    }
+
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public Professor getAdvisor() {

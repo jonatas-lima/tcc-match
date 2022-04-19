@@ -33,7 +33,10 @@ public class Professor extends TCCMatchUser {
     )
     private Set<TCC> interestedTCCs;
 
-    public Professor() {}
+    public Professor() {
+        this.interestedStudyAreas = new HashSet<>();
+        this.interestedTCCs = new HashSet<>();
+    }
 
     public Professor(String fullName, String email, String username, String password, Collection<String> labs, Integer quota) {
         super(fullName, email, username, password, UserRole.PROFESSOR);
