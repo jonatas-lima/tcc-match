@@ -33,7 +33,10 @@ public class Student extends TCCMatchUser {
     @JoinTable(joinColumns = @JoinColumn(name = "student_id"), inverseJoinColumns = @JoinColumn(name = "study_area_id"))
     private Set<StudyArea> interestedStudyAreas;
 
-    public Student() {}
+    public Student() {
+        this.interestedStudyAreas = new HashSet<>();
+        this.orientationInterests = new HashSet<>();
+    }
 
     public Student(String fullName, String registration, String email, String expectedConclusionTerm, String username, String password) {
         super(fullName, email, username, password, UserRole.STUDENT);
@@ -78,6 +81,10 @@ public class Student extends TCCMatchUser {
 
     public boolean removeOrientationInterest(TCC orientationInterest) {
         return this.orientationInterests.remove(orientationInterest);
+    }
+
+    public Set<TCC> getOrientationInterests() {
+        return orientationInterests;
     }
 
     public TCC getTcc() {
